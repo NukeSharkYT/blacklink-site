@@ -3,27 +3,96 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Terms of Use · Blacklink</title>
+  <title>Blacklink Terms of Use · Blacklink</title>
+  <meta name="description" content="Blacklink Terms of Use for the Blacklink app and joinblacklink.com.">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="fonts/fonts.css">
   <style>
-    :root { --bg:#000; --text:#fff; --text-secondary:#a3a3a3; --text-muted:#767676; --border:#262626; }
-    html,body { margin:0; background:var(--bg); color:var(--text); font-family:"Inter",system-ui,sans-serif; }
-    main { max-width:720px; margin:0 auto; padding:64px 24px 96px; line-height:1.6; }
-    h1 { font-family:"Archivo Black","Arial Black",sans-serif; font-size:28px; letter-spacing:1px; text-transform:uppercase; margin:0 0 8px; }
-    .meta { color:var(--text-muted); font-size:13px; margin-bottom:40px; }
-    p { color:var(--text-secondary); }
-    a { color:var(--text); }
-    footer { border-top:1px solid var(--border); margin-top:64px; padding-top:24px; color:var(--text-muted); font-size:13px; }
+    :root {
+      --bg: #000000; --surface: #141414; --border: #262626; --border-strong: #3f3f3f;
+      --text: #ffffff; --text-secondary: #a3a3a3; --text-muted: #767676;
+      --font-display: "Archivo Black", "Arial Black", Impact, sans-serif;
+      --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    html, body { margin: 0; background: var(--bg); color: var(--text); }
+    body { font-family: var(--font-body); font-size: 17px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    .wrap { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; }
+    @media (min-width: 720px) { .wrap { padding: 72px 24px 120px; } }
+    .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
+    .brand { font-family: var(--font-display); font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: var(--text); text-decoration: none; }
+    .other { color: var(--text-muted); font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+    .other:hover { color: var(--text); }
+    h1 { font-family: var(--font-display); font-size: 30px; line-height: 1.15; letter-spacing: 1px; text-transform: uppercase; margin: 0 0 10px; }
+    @media (min-width: 720px) { h1 { font-size: 36px; } }
+    .meta { color: var(--text-secondary); font-size: 14px; margin: 0 0 36px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+    h2 { font-family: var(--font-display); font-size: 17px; letter-spacing: 1.5px; text-transform: uppercase; margin: 44px 0 12px; line-height: 1.3; }
+    p, li { color: var(--text-secondary); }
+    p { margin: 0 0 18px; }
+    strong { color: var(--text); font-weight: 600; }
+    ul, ol { padding-left: 22px; margin: 0 0 20px; }
+    li { margin: 0 0 8px; }
+    li::marker { color: var(--text-muted); }
+    a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--border-strong); }
+    a:hover { text-decoration-color: var(--text); }
+    .table-wrap { overflow-x: auto; margin: 0 0 24px; border: 1px solid var(--border); border-radius: 8px; }
+    table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 15px; line-height: 1.5; }
+    th, td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    th { color: var(--text); font-weight: 600; background: var(--surface); }
+    tr:last-child td { border-bottom: 0; }
+    /* outstanding items: visible, muted, easy to find */
+    .marker { color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border-strong); border-radius: 4px; padding: 0 5px; font-size: 0.92em; }
+    footer { margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+    footer a { color: var(--text-secondary); }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Terms of Use</h1>
-    <p class="meta">Last updated: [DATE] · Version 2026-09-13</p>
-    <p>[Terms of Use text to follow. Drafted separately.]</p>
+  <main class="wrap">
+    <nav class="top"><a class="brand" href="/">Blacklink</a><a class="other" href="/privacy">Privacy Policy</a></nav>
+    <h1>Blacklink Terms of Use</h1>
+    <p class="meta">Version 1.0 — effective <span class="marker">[FILL IN: launch date]</span></p>
+<p>These Terms are the agreement between you and Blacklink when you use the Blacklink app or the website at joinblacklink.com. Please read them. By creating an account you accept them; we record the version you accepted and when.</p>
+<h2>1. Who you are dealing with</h2>
+<p>Blacklink is operated by <strong>Kai O'Donnell, trading as Blacklink</strong>, <span class="marker">[FILL IN: business address]</span>, United Kingdom. Contact: <strong><a href="mailto:hello@joinblacklink.com">hello@joinblacklink.com</a></strong>.</p>
+<p>This address is also our single point of contact for members, and for authorities under the UK Online Safety Act and the EU Digital Services Act.</p>
+<h2>2. What Blacklink is</h2>
+<p>Blacklink is a community app where founders and builders can find a co-founder. It offers member profiles, groups organised by business model, "war rooms" with live seats, text and voice chat, direct messages, a feed of members' wins, and a rank system based on community activity.</p>
+<p>Blacklink is a place to meet people. <strong>We do not vet members, verify their claims, or guarantee that you will find a co-founder, a partner, funding, or any outcome.</strong> Any relationship, agreement, or business you form with another member is between you and them.</p>
+<h2>3. Who can use Blacklink</h2>
+<ul><li>You must be <strong>16 or older</strong>. We ask for your date of birth and will delete accounts belonging to anyone under 16.</li><li>You must give accurate information and keep your account details up to date.</li><li>One person, one account. You are responsible for everything done through your account, so keep your password private and tell us at once if you think someone else has used it.</li><li>You must not use Blacklink if you have previously been banned.</li></ul>
+<h2>4. Community rules</h2>
+<p>Blacklink is for serious builders. To keep it that way, you must not:</p>
+<ol><li><strong>Harass, threaten, abuse, or bully</strong> anyone, or post hateful content about any group of people.</li><li>Post or share <strong>sexual or adult content</strong>, or anything sexualising minors. (This will be reported to the authorities.)</li><li><strong>Solicit investment or fundraising</strong> from members, promote securities, or run any form of "invest in my project" pitch. Blacklink is not a place to raise money.</li><li><strong>Promote cryptocurrencies, tokens, memecoins, or trading schemes</strong>, or use Blacklink to shill any coin or financial product.</li><li><strong>Spam</strong>: repetitive posts, mass unsolicited direct messages, or advertising unrelated to finding a co-founder.</li><li><strong>Impersonate</strong> anyone, or claim affiliations, credentials, or results you do not have.</li><li>Post anything <strong>illegal</strong>, or that infringes someone else's rights (copyright, confidentiality, privacy).</li><li><strong>Scrape, collect, or misuse</strong> other members' data, or attempt to bypass our security, room passwords, or age gate.</li><li>Try to <strong>manipulate the rank system</strong>, for example by using multiple accounts or coordinated activity to farm respect.</li><li>Do anything that damages Blacklink or the experience of other members.</li></ol>
+<p>We will remove content and suspend or ban accounts that break these rules. See section 7.</p>
+<h2>5. Your content</h2>
+<p>"Content" means anything you post or send on Blacklink: profile details, messages, wins, room names, and so on.</p>
+<ul><li><strong>You own your content.</strong> You give us a non-exclusive, royalty-free, worldwide licence to store, display, and transmit it as needed to run Blacklink (for example, showing your win to other members or delivering your message to a room). This licence ends when the content is deleted, except for copies kept in backups for a limited time or where we must keep it by law.</li><li><strong>You are responsible for your content</strong>, including that you have the right to post it and that it complies with these Terms.</li><li><strong>Wins and figures are self-declared and unverified.</strong> Members can post revenue, milestones, or other figures. Blacklink does not check them, and they are shown with an "unverified" label. Do not rely on any figure or claim posted by another member. Posting figures you know to be false is a breach of section 4.</li><li><strong>Direct messages are private</strong> between the participants, but they are not encrypted end-to-end. We do not read them in the ordinary course of running the service, but we may review a message if it is reported or where the law requires.</li><li><strong>Voice</strong> in war rooms is live only. We do not record it, and you must not record other members without their consent.</li></ul>
+<h2>6. Rank</h2>
+<p>Rank is calculated from community activity such as respect received on wins, replies to your messages, sustained conversations, activity in rooms you created, and login streaks. Rank cannot be bought. We may change how rank is calculated, and your rank may go up or down as a result. Rank is a feature of the service, not a certification of anything.</p>
+<h2>7. Reporting, moderation, and appeals</h2>
+<ul><li><strong>Report:</strong> every profile, post, and message has a Report option. You can also email us. We aim to review reports <strong>within 48 hours, and usually sooner</strong>.</li><li><strong>Action we may take:</strong> remove content, warn you, restrict features, suspend, or permanently ban your account. For serious or repeated breaches we may ban without warning. Where content appears illegal, we may report it to the relevant authorities.</li><li><strong>We will tell you</strong> if we remove your content or restrict your account, and why, unless the law prevents it or telling you would put someone at risk.</li><li><strong>Appeal:</strong> if you think we got it wrong, email <a href="mailto:hello@joinblacklink.com">hello@joinblacklink.com</a> within 14 days with your username and what happened. We will review it and reply.</li><li><strong>Blocking:</strong> you can block any member. They will no longer see your content, and you will not see theirs or receive their messages.</li></ul>
+<h2>8. Accounts, deletion, and termination</h2>
+<ul><li><strong>You can delete your account at any time</strong> in <strong>Settings → Delete account</strong>. Your data is deleted as described in our Privacy Policy.</li><li>We may suspend or terminate your account if you breach these Terms, if required by law, or if we discontinue Blacklink. Where reasonable we will give you notice and a chance to export your data.</li><li>Sections that by their nature should survive (for example content licence for backups, liability, and governing law) continue after termination.</li></ul>
+<h2>9. Price and changes to the service</h2>
+<p>Blacklink is currently <strong>free to use</strong>. If we introduce paid features in future, we will tell you clearly what they cost, how billing works, and how to cancel before you pay anything, and we will update these Terms. [Remove or expand this section when subscriptions launch.]</p>
+<p>We are a small, early-stage service. Features may change, be added, or be withdrawn. We will try to warn you about significant changes.</p>
+<h2>10. Apple</h2>
+<p>If you use Blacklink on an iPhone, Apple's standard End User Licence Agreement also applies to the app software, and Apple is not responsible for the app or its content. Any support requests should come to us, not Apple. <strong><span class="marker">[LAWYER REVIEW: confirm whether to rely on Apple's Standard EULA in App Store Connect or include Apple's required custom-EULA clauses here.]</span></strong></p>
+<h2>11. Privacy</h2>
+<p>Our Privacy Policy explains how we handle your data and forms part of these Terms.</p>
+<h2>12. What we do not promise</h2>
+<ul><li>Blacklink is provided "as is". We do not promise it will always be available, error-free, or secure, although we work hard to make it so.</li><li>We do not verify members or their claims. <strong>Nothing on Blacklink is financial, legal, or professional advice.</strong></li><li>We are not responsible for the conduct of other members, online or offline. Take the same care meeting people from Blacklink as you would meeting anyone from the internet.</li></ul>
+<h2>13. Liability</h2>
+<p><strong><span class="marker">[LAWYER REVIEW: this section in particular.]</span></strong></p>
+<p>Nothing in these Terms limits or excludes our liability for death or personal injury caused by our negligence, for fraud, or for anything else that cannot be limited by law. Nothing in these Terms affects your statutory rights as a consumer.</p>
+<p>Subject to that, we are not liable for any loss that was not a foreseeable result of our breaking these Terms, for any business losses (including lost profit, revenue, opportunities, or data), or for losses arising from other members' content or conduct. Because Blacklink is free, our total liability to you for any claim is limited to £100.</p>
+<h2>14. Changes to these Terms</h2>
+<p>We may update these Terms. For significant changes we will tell you in the app at least 14 days before they take effect, and you will be asked to accept the new version. If you do not accept, you can stop using Blacklink and delete your account.</p>
+<h2>15. Law and disputes</h2>
+<p>These Terms are governed by the law of England and Wales, and the courts of England and Wales have jurisdiction. If you live in the EU, you also keep the protection of the mandatory consumer laws of your own country, and you may bring a claim in your own courts. If you have a complaint, please contact us first; we would rather fix it than fight about it.</p>
+<h2>16. Contact</h2>
+<p>Kai O'Donnell, trading as Blacklink<br><span class="marker">[FILL IN: business address]</span><br><a href="mailto:hello@joinblacklink.com">hello@joinblacklink.com</a></p>
     <footer>
-      © 2026 Blacklink · Operated by Kai O’Donnell · <a href="mailto:kaiodonnell@icloud.com">kaiodonnell@icloud.com</a><br>
+      © 2026 Blacklink · Operated by Kai O’Donnell, trading as Blacklink · <a href="mailto:hello@joinblacklink.com">hello@joinblacklink.com</a><br>
       <a href="/">Home</a> · <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Use</a>
     </footer>
   </main>
