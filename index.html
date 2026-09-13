@@ -390,12 +390,11 @@
 
   <script>
     (function () {
-      /* ── Wire this later ─────────────────────────────────
-         Set FORM_ENDPOINT to a form-service URL that accepts a JSON POST
-         (e.g. Formspree: "https://formspree.io/f/xxxxxxxx").
-         While it is empty, submissions fall back to a mailto: draft to
-         NOTIFY_EMAIL and are also kept in localStorage under STORAGE_KEY. */
-      var FORM_ENDPOINT = "";
+      /* ── Brevo subscription form "Blacklink waitlist" ────
+         Submissions go to the Brevo list; every campaign Brevo sends
+         carries its mandatory unsubscribe link. If the endpoint is ever
+         emptied, submissions fall back to a mailto: draft. */
+      var FORM_ENDPOINT = "https://536078f6.sibforms.com/serve/MUIFAJWJ1hFW9rg4r666YK-Dy9Qw7jm71ZRhtk1gaVzP7SbjaL_JgsYPoLB1wM3ntoUSD0aJ9in-dFP8Z_iJm3IjMRdnt44MhyeplueuUhMwMlwGqeUL9ZWnRVEauF5TqdFmKmE9WWR9r-LYZwYUaV8W7kUZnoO4RZCspqyg-CxBubiz__RPdrH2x0kBdP0NzcSbmhf5-9OJhw--OA";
       var NOTIFY_EMAIL = "support@blacklink.club";
       var STORAGE_KEY = "blacklink.waitlist";
 
@@ -448,12 +447,19 @@
         }
 
         setBusy(true);
-        fetch(FORM_ENDPOINT, {
+        var body = new URLSearchParams();
+        body.set("EMAIL", address);
+        body.set("email_address_check", ""); /* Brevo honeypot, must stay empty */
+        body.set("locale", "en");
+        fetch(FORM_ENDPOINT + "?isAjax=1", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "Accept": "application/json" },
-          body: JSON.stringify({ email: address, source: "coming-soon" })
+          headers: { "Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json" },
+          body: body.toString()
         }).then(function (res) {
           if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.json().catch(function () { return {}; });
+        }).then(function (json) {
+          if (json && json.errors && json.errors.length) throw new Error("rejected");
           remember(address);
           showDone();
         }).catch(function () {
