@@ -251,19 +251,34 @@ The one addition beyond the current page. Derived from the war room (§3, §4), 
 
 ## 9. Responsive Behavior
 
-**Breakpoints:**
-| Name | Width | Key Changes |
-|------|-------|-------------|
-| Phone | < 480px | Form stacks (input above button); logo 240px; spacing at the smaller step |
-| Tablet | 480–767px | Form goes inline (input + pill on one row) |
-| Desktop | ≥ 768px | Logo 320px; larger vertical rhythm; table geometry fits the viewport |
+**Breakpoints:** orientation decides the composition; width and height decide the scale.
+| Name | Condition | Key Changes |
+|------|-----------|-------------|
+| Phone portrait | portrait, < 480px | One centred column. Form stacks (input above button); logo 240px; spacing at the smaller step. Unchanged reference layout. |
+| Portrait, wider | portrait, 480–767px | Same column; form goes inline (input + pill on one row) |
+| Tablet portrait | portrait, ≥ 768px | Same column scaled up: logo min(52vw, 440px), wordmark to 40px, display to 120px (capped by 12vh), form 480px / 52px controls |
+| Landscape / desktop | landscape, ≥ 768px wide and > 500px tall | **Same single centred column**, scaled. Container min(960px, 84vw). Every size is `min(width-based, height-based)` so the column fills the screen but fits the viewport at 1366×768, 1440×900, 1920×1080 without scrolling. |
+| Phone landscape | landscape, ≤ 500px tall | Same column with compact steps (logo 200px, display 40–56px). Scrolls: a 375px-tall viewport cannot hold the composition. |
+
+**Landscape scale (all `clamp(min, min(vw, vh), max)`):**
+- Logo width min(36vw, 38vh, 480px). Wordmark 28–44px via min(3vw, 4.4vh). Tagline 17–22px. Pitch 15–19px, max 44ch.
+- COMING SOON 72–128px via min(8vw, 11vh): always the largest element, roughly 3× the wordmark.
+- Controls 48–56px tall via 6vh; capture up to min(560px, 46vw).
+- Gaps scale with vh (logo→wordmark 20–32px, pitch→display 32–64px, store→capture 28–48px) so short viewports compress rhythm before type.
+- The table stays centred behind the display line, width min(100vw, 1200px).
 
 **Touch Targets:** input and button are 48px tall (≥ 44px). Full-width on phone.
-**Collapsing Strategy:** nothing collapses; the composition is a single centred column at every width. Only the form direction and spacing step change.
+**Collapsing Strategy:** one centred column at every size and orientation. Only the scale, the form direction and the spacing steps change. Nothing is hidden.
 **Short phones (≤ 720px tall, < 768px wide):** logo 180px, top padding 16, main padding 8, display and capture gaps 32, note min-height 0. Same composition, smaller steps, so a 375×667 phone still shows everything without scrolling.
 **Ambient layer:** SVG uses `preserveAspectRatio="xMidYMid meet"` with an explicit width (130vw on phone, min(100vw, 1200px) on desktop) so seat percentages hold at any aspect ratio and the table always frames rather than crowds the content. Decoration never overlaps copy: on phones the table is offset below centre.
 
 ```css
 @media (min-width: 480px) { form { flex-direction: row; } }
-@media (min-width: 768px) { .logo { width: 320px; } .soon { margin-top: 72px; } .capture { margin-top: 56px; } main { padding: 16px 0; } }
+@media (min-width: 768px) and (orientation: portrait) { /* scaled single column, see table */ }
+@media (orientation: landscape) and (min-width: 768px) {
+  main { max-width: min(960px, 84vw); }
+  .logo { width: min(36vw, 38vh, 480px); }
+  .wordmark { font-size: clamp(28px, min(3vw, 4.4vh), 44px); }
+  .soon { font-size: clamp(72px, min(8vw, 11vh), 128px); }
+}
 ```

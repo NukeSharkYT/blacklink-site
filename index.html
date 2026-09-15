@@ -119,6 +119,7 @@
 
     /* ── Layout (DESIGN.md §5) ──────────────────────────────────────── */
     main, footer { position: relative; z-index: 1; }
+    .brand, .action { width: 100%; }
 
     main {
       flex: 1;
@@ -170,7 +171,7 @@
     }
 
     .pitch {
-      margin: 8px 0 0;
+      margin: 8px auto 0;
       max-width: 34ch;
       font-size: 15px;
       color: var(--text-secondary);
@@ -297,25 +298,95 @@
       form { flex-direction: row; }
       .btn { flex: none; }
     }
-    @media (min-width: 768px) {
+    /* Portrait tablets: same single column, scaled to the larger canvas. */
+    @media (min-width: 768px) and (orientation: portrait) {
       body { padding-top: 32px; padding-bottom: 24px; }
-      main { padding: 16px 0; }
-      .logo { width: 320px; margin-bottom: 32px; }
-      .tagline { margin-top: 20px; }
-      .soon { margin-top: 72px; }
-      .capture { margin-top: 56px; }
+      main { max-width: min(720px, 80vw); padding: 16px 0; }
+      .logo { width: min(52vw, 440px); margin-bottom: 32px; }
+      .wordmark { font-size: clamp(32px, 4.5vw, 40px); }
+      .tagline { margin-top: 20px; font-size: clamp(17px, 2.4vw, 20px); }
+      .pitch { font-size: clamp(15px, 2vw, 17px); max-width: 40ch; }
+      .soon { margin-top: 72px; font-size: clamp(84px, min(12vw, 12vh), 120px); }
+      .store { font-size: 14px; }
+      .capture { margin-top: 56px; max-width: 480px; }
+      .field, .btn { height: 52px; }
+      .field { font-size: 17px; }
+      .btn { font-size: 14px; padding: 0 28px; }
       .ambient svg { width: min(100vw, 1200px); transform: translate(-50%, -50%); }
     }
 
     /* Short phones (iPhone SE class, ≤ 720px tall): compact the rhythm so the
        page still fits one viewport. Same composition, smaller steps. */
-    @media (max-width: 767px) and (max-height: 720px) {
+    @media (max-width: 767px) and (max-height: 720px) and (orientation: portrait) {
       body { padding-top: 16px; }
       main { padding: 8px 0; }
       .logo { width: min(180px, 56vw); margin-bottom: 16px; }
       .soon { margin-top: 32px; }
       .capture { margin-top: 32px; }
       .note { min-height: 0; }
+    }
+
+    /* ── Landscape / desktop (DESIGN.md §9): same column, scaled ────
+       Identical structure to the phone layout. Every size is the smaller
+       of a width-based and a height-based measure, so the column grows
+       with the screen but always fits the viewport height without
+       scrolling (1366×768 up to 4K). */
+    @media (orientation: landscape) and (min-width: 768px) and (min-height: 501px) {
+      body {
+        padding-top: max(24px, env(safe-area-inset-top));
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
+      }
+      main { max-width: min(960px, 84vw); padding: 8px 0; }
+
+      .logo      { width: min(36vw, 38vh, 480px); margin-bottom: clamp(20px, 3vh, 32px); }
+      .wordmark  { font-size: clamp(28px, min(3vw, 4.4vh), 44px); }
+      .tagline   { margin-top: clamp(12px, 2vh, 20px); font-size: clamp(17px, min(1.5vw, 2.4vh), 22px); }
+      .pitch     { font-size: clamp(15px, min(1.3vw, 2vh), 19px); max-width: 44ch; }
+
+      .soon      { margin-top: clamp(32px, 5.5vh, 64px); font-size: clamp(72px, min(8vw, 11vh), 128px); }
+      .store     { margin-top: clamp(10px, 1.4vh, 14px); font-size: clamp(13px, min(1vw, 1.5vh), 15px); }
+
+      .capture   { margin-top: clamp(28px, 4vh, 48px); max-width: min(560px, 46vw); }
+      .field, .btn { height: clamp(48px, 6vh, 56px); }
+      .field     { font-size: clamp(16px, min(1.25vw, 2vh), 18px); }
+      .btn       { font-size: clamp(13px, min(1.05vw, 1.6vh), 15px); padding: 0 clamp(24px, 2vw, 32px); }
+      .note      { min-height: 0; }
+      .note:empty{ display: none; }
+
+      footer     { padding-top: clamp(12px, 2vh, 24px); }
+
+      .ambient svg { width: min(100vw, 1200px); transform: translate(-50%, -50%); }
+    }
+
+    /* Short landscape screens (≤ 800px tall, e.g. 1366×768): compress the
+       rhythm a step further so the column still fits without scrolling. */
+    @media (orientation: landscape) and (min-width: 768px) and (min-height: 501px) and (max-height: 800px) {
+      body { padding-top: 16px; padding-bottom: 12px; }
+      main { padding: 4px 0; }
+      .logo { width: min(36vw, 33vh, 480px); margin-bottom: 2.4vh; }
+      .tagline { margin-top: 1.6vh; }
+      .soon { margin-top: 4.5vh; font-size: min(8vw, 10vh); }
+      .store { margin-top: 1.2vh; }
+      .capture { margin-top: 3.5vh; }
+      .consent { margin-top: 8px; }
+      footer { padding-top: 1.5vh; }
+      footer p { margin: 2px 0; }
+    }
+
+    /* Phones in landscape (≤ 500px tall): same column, compact steps. The
+       page scrolls here — a 375px-tall viewport cannot hold the
+       composition — but stays one structure and never clips. */
+    @media (orientation: landscape) and (max-height: 500px) {
+      body { padding-top: 16px; padding-bottom: 12px; }
+      main { padding: 8px 0; }
+      .logo { width: min(200px, 30vw); margin-bottom: 12px; }
+      .soon { margin-top: 28px; font-size: clamp(40px, 9vw, 56px); }
+      .capture { margin-top: 24px; }
+      .field { padding: 0 12px; }
+      .btn   { padding: 0 16px; }
+      .note  { min-height: 0; }
+      .note:empty { display: none; }
+      footer { padding-top: 16px; }
     }
 
     /* ── Reduced motion (DESIGN.md §7) ──────────────────────────────── */
@@ -346,12 +417,14 @@
   </div>
 
   <main class="fade-up">
-    <img class="logo" src="logoB.png" alt="Blacklink chained-B logo" width="1672" height="941" decoding="async" fetchpriority="high">
+    <div class="brand">
+      <img class="logo" src="logoB.png" alt="Blacklink chained-B logo" width="1672" height="941" decoding="async" fetchpriority="high">
+      <h1 class="wordmark">Blacklink</h1>
+      <p class="tagline">Where you find your co-founder.</p>
+      <p class="pitch">Co-founder matching for serious builders. War rooms. Live presence. Real wins.</p>
+    </div>
 
-    <h1 class="wordmark">Blacklink</h1>
-    <p class="tagline">Where you find your co-founder.</p>
-    <p class="pitch">Co-founder matching for serious builders. War rooms. Live presence. Real wins.</p>
-
+    <div class="action">
     <p class="soon">Coming<br>Soon</p>
     <p class="store">App Store</p>
 
@@ -380,6 +453,7 @@
         <p class="headline">You’re on the list.</p>
         <p class="sub">We’ll email you the day Blacklink hits the App Store.</p>
       </div>
+    </div>
     </div>
   </main>
 
