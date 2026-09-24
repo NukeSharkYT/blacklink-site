@@ -1,6 +1,6 @@
 # Blacklink Privacy Policy
 
-**Version 1.0 — effective 24 September 2026**
+**Version 1.1 — effective 24 September 2026**
 
 This policy explains what personal data Blacklink collects, why, who it is shared with, how long it is kept, and what rights you have. It covers the Blacklink app and the website at joinblacklink.com. We have written it in plain English on purpose. If anything is unclear, email us.
 
@@ -59,7 +59,7 @@ Blacklink is for people aged **16 and over**. We ask for your date of birth when
 | Security, fraud prevention, and keeping the service working | Technical data, logs | Legitimate interests |
 | The rank system (calculating your rank from your activity) | Rank and activity metrics | Legitimate interests (running a feature of the service); you can object, see section 8 |
 | Sending push notifications about messages, seat activity, and wins | Push token | Your consent via your device settings; you can turn them off at any time |
-| Emailing the waiting list about Blacklink's launch | Waiting-list email | Consent; every email includes an unsubscribe link |
+| Emailing the waiting list about early access to Blacklink and its launch | Waiting-list email | Consent; every email includes an unsubscribe link |
 | Responding to your requests and legal obligations | Support correspondence, relevant records | Legal obligation and legitimate interests |
 
 We do not sell your data. We do not show advertising. We do not use your data to make automated decisions with legal or similarly significant effects on you.
@@ -91,7 +91,7 @@ Your data is stored in the United Kingdom. Some of our providers (Apple, Expo, L
 - **Voice:** not stored at all.
 - **When you delete your account:** your profile, photo, messages, wins, seats, memberships, rank data, and blocks are deleted from our live systems immediately. Copies in encrypted backups expire within **30 days**.
 - **Reports and moderation records:** we keep a record of reports and the action taken for up to **12 months** after the case is closed, so we can identify repeat abuse and meet our online safety obligations. Where a report concerns illegal content we may keep records for longer if the law requires.
-- **Waiting-list emails:** until you unsubscribe or until launch communications end, whichever is sooner, after which they are deleted from Brevo.
+- **Waiting-list emails:** until you unsubscribe or until early-access and launch communications end, whichever is sooner, after which they are deleted from Brevo.
 - **Server logs:** up to 30 days.
 
 ## 8. Your rights
