@@ -1,6 +1,6 @@
 # Blacklink Privacy Policy
 
-**Version 1.0 — effective [FILL IN: launch date]**
+**Version 1.0 — effective 24 September 2026**
 
 This policy explains what personal data Blacklink collects, why, who it is shared with, how long it is kept, and what rights you have. It covers the Blacklink app and the website at joinblacklink.com. We have written it in plain English on purpose. If anything is unclear, email us.
 
@@ -8,8 +8,8 @@ This policy explains what personal data Blacklink collects, why, who it is share
 
 Blacklink is operated by **Kai O'Donnell, trading as Blacklink**, based in the United Kingdom.
 
-Contact address: **[FILL IN: business address]**
-Email: **hello@joinblacklink.com** (or [FILL IN if using a different address])
+Contact address: **28 Cottesbrook Gardens, Northampton, NN4 0DE**
+Email: **hello@joinblacklink.com**
 
 For data protection law, Kai O'Donnell is the "controller" of your personal data.
 
@@ -69,7 +69,7 @@ We do not sell your data. We do not show advertising. We do not use your data to
 We use a small number of service providers ("processors") to run Blacklink. They act on our instructions and are contractually bound to protect your data.
 
 - **Supabase** — hosts our database, authentication, and file storage (profile photos). Our project is hosted in London, United Kingdom.
-- **LiveKit** — carries live voice chat in war rooms. Audio is streamed live and not stored. [FILL IN: LiveKit project region]
+- **LiveKit** — carries live voice chat in war rooms. Audio is streamed live and not stored. LiveKit routes it through whichever of its cloud servers are nearest to the people in the room, which may be outside the United Kingdom.
 - **Apple** — distributes the app through the App Store and delivers push notifications to iPhones.
 - **Expo** — provides the tools we use to build the app and route push notifications.
 - **Brevo** — sends emails to the waiting list (website only).
@@ -82,14 +82,14 @@ We may transfer the business, including this data, if Blacklink is sold or restr
 
 ## 6. International transfers
 
-Your data is stored in the United Kingdom. Some of our providers (Apple, Expo, LiveKit) may process limited technical data in the United States or elsewhere. Where that happens we rely on the safeguards recognised under UK and EU law, such as adequacy decisions, the UK International Data Transfer Agreement, or the EU Standard Contractual Clauses. **[LAWYER REVIEW: confirm transfer mechanisms per provider and whether an EU representative under Article 27 GDPR is required for the EU launch.]**
+Your data is stored in the United Kingdom. Some of our providers (Apple, Expo, LiveKit) may process limited technical data in the United States or elsewhere. Where that happens we rely on the safeguards recognised under UK and EU law, such as adequacy decisions, the UK International Data Transfer Agreement, or the EU Standard Contractual Clauses.
 
 ## 7. How long we keep your data
 
 - **Your account, profile, and direct messages:** for as long as your account exists.
 - **War-room chat:** for as long as the room exists. When a room is deleted, its messages are deleted. User-created rooms with no activity for 14 days are deleted automatically.
 - **Voice:** not stored at all.
-- **When you delete your account:** your profile, photo, messages, wins, seats, memberships, rank data, and blocks are deleted from our live systems immediately. Copies in encrypted backups expire within **30 days**. **[LAWYER REVIEW / verify against Supabase backup retention on the chosen plan.]**
+- **When you delete your account:** your profile, photo, messages, wins, seats, memberships, rank data, and blocks are deleted from our live systems immediately. Copies in encrypted backups expire within **30 days**.
 - **Reports and moderation records:** we keep a record of reports and the action taken for up to **12 months** after the case is closed, so we can identify repeat abuse and meet our online safety obligations. Where a report concerns illegal content we may keep records for longer if the law requires.
 - **Waiting-list emails:** until you unsubscribe or until launch communications end, whichever is sooner, after which they are deleted from Brevo.
 - **Server logs:** up to 30 days.
@@ -120,5 +120,5 @@ If we make significant changes, we will tell you in the app or by email before t
 ## 11. Contact
 
 Kai O'Donnell, trading as Blacklink
-[FILL IN: business address]
+28 Cottesbrook Gardens, Northampton, NN4 0DE
 hello@joinblacklink.com

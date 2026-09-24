@@ -1,12 +1,12 @@
 # Blacklink Terms of Use
 
-**Version 1.0 — effective [FILL IN: launch date]**
+**Version 1.0 — effective 24 September 2026**
 
 These Terms are the agreement between you and Blacklink when you use the Blacklink app or the website at joinblacklink.com. Please read them. By creating an account you accept them; we record the version you accepted and when.
 
 ## 1. Who you are dealing with
 
-Blacklink is operated by **Kai O'Donnell, trading as Blacklink**, [FILL IN: business address], United Kingdom. Contact: **hello@joinblacklink.com**.
+Blacklink is operated by **Kai O'Donnell, trading as Blacklink**, 28 Cottesbrook Gardens, Northampton, NN4 0DE, United Kingdom. Contact: **hello@joinblacklink.com**.
 
 This address is also our single point of contact for members, and for authorities under the UK Online Safety Act and the EU Digital Services Act.
 
@@ -76,7 +76,7 @@ We are a small, early-stage service. Features may change, be added, or be withdr
 
 ## 10. Apple
 
-If you use Blacklink on an iPhone, Apple's standard End User Licence Agreement also applies to the app software, and Apple is not responsible for the app or its content. Any support requests should come to us, not Apple. **[LAWYER REVIEW: confirm whether to rely on Apple's Standard EULA in App Store Connect or include Apple's required custom-EULA clauses here.]**
+If you use Blacklink on an iPhone, Apple's standard End User Licence Agreement also applies to the app software, and Apple is not responsible for the app or its content. Any support requests should come to us, not Apple.
 
 ## 11. Privacy
 
@@ -89,8 +89,6 @@ Our Privacy Policy explains how we handle your data and forms part of these Term
 - We are not responsible for the conduct of other members, online or offline. Take the same care meeting people from Blacklink as you would meeting anyone from the internet.
 
 ## 13. Liability
-
-**[LAWYER REVIEW: this section in particular.]**
 
 Nothing in these Terms limits or excludes our liability for death or personal injury caused by our negligence, for fraud, or for anything else that cannot be limited by law. Nothing in these Terms affects your statutory rights as a consumer.
 
@@ -107,5 +105,5 @@ These Terms are governed by the law of England and Wales, and the courts of Engl
 ## 16. Contact
 
 Kai O'Donnell, trading as Blacklink
-[FILL IN: business address]
+28 Cottesbrook Gardens, Northampton, NN4 0DE
 hello@joinblacklink.com
