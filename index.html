@@ -437,6 +437,12 @@
          emptied, submissions fall back to a mailto: draft. */
       var FORM_ENDPOINT = "https://536078f6.sibforms.com/serve/MUIFAJWJ1hFW9rg4r666YK-Dy9Qw7jm71ZRhtk1gaVzP7SbjaL_JgsYPoLB1wM3ntoUSD0aJ9in-dFP8Z_iJm3IjMRdnt44MhyeplueuUhMwMlwGqeUL9ZWnRVEauF5TqdFmKmE9WWR9r-LYZwYUaV8W7kUZnoO4RZCspqyg-CxBubiz__RPdrH2x0kBdP0NzcSbmhf5-9OJhw--OA==";
       var NOTIFY_EMAIL = "hello@joinblacklink.com";
+      /* Supabase: the same waitlist table the app's login screen writes to.
+         join_waitlist() is the app's deliberately public endpoint: it
+         validates and de-duplicates the address and returns nothing.
+         This is the public "anon" key already shipped inside the app. */
+      var SUPABASE_URL = "https://brdwezlraliwrwbfbulx.supabase.co";
+      var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJyZHdlemxyYWxpd3J3YmZidWx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwMTM2NTYsImV4cCI6MjA5ODU4OTY1Nn0.AQe67anw8yik4WOHyOHxCgNgOGmlifPZe-auHDNyzfk";
       var STORAGE_KEY = "blacklink.waitlist";
 
       var form = document.getElementById("notify");
@@ -463,6 +469,37 @@
         button.textContent = busy ? "Sending" : "Request access";
       }
 
+      function sendBrevo(address) {
+        var body = new URLSearchParams();
+        body.set("EMAIL", address);
+        body.set("email_address_check", ""); /* Brevo honeypot, must stay empty */
+        body.set("locale", "en");
+        return fetch(FORM_ENDPOINT + "?isAjax=1", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json" },
+          body: body.toString()
+        }).then(function (res) {
+          if (!res.ok) throw new Error("Brevo HTTP " + res.status);
+          return res.json().catch(function () { return {}; });
+        }).then(function (json) {
+          if (json && json.errors && json.errors.length) throw new Error("Brevo rejected");
+        });
+      }
+
+      function sendSupabase(address) {
+        return fetch(SUPABASE_URL + "/rest/v1/rpc/join_waitlist", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": "Bearer " + SUPABASE_ANON_KEY
+          },
+          body: JSON.stringify({ p_email: address })
+        }).then(function (res) {
+          if (!res.ok) throw new Error("Supabase HTTP " + res.status);
+        });
+      }
+
       form.addEventListener("submit", function (event) {
         event.preventDefault();
         note.textContent = "";
@@ -477,7 +514,11 @@
 
         var address = email.value.trim();
 
-        if (!FORM_ENDPOINT) {
+        var senders = [];
+        if (FORM_ENDPOINT) senders.push(sendBrevo);
+        if (SUPABASE_URL && SUPABASE_ANON_KEY) senders.push(sendSupabase);
+
+        if (!senders.length) {
           remember(address);
           var draft = "mailto:" + NOTIFY_EMAIL +
             "?subject=" + encodeURIComponent("Blacklink waitlist") +
@@ -487,27 +528,23 @@
           return;
         }
 
+        /* Send to every destination at once. The visitor is on the list if
+           any of them accepted the address; only if all fail do we ask them
+           to try again. */
         setBusy(true);
-        var body = new URLSearchParams();
-        body.set("EMAIL", address);
-        body.set("email_address_check", ""); /* Brevo honeypot, must stay empty */
-        body.set("locale", "en");
-        fetch(FORM_ENDPOINT + "?isAjax=1", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json" },
-          body: body.toString()
-        }).then(function (res) {
-          if (!res.ok) throw new Error("HTTP " + res.status);
-          return res.json().catch(function () { return {}; });
-        }).then(function (json) {
-          if (json && json.errors && json.errors.length) throw new Error("rejected");
-          remember(address);
-          showDone();
-        }).catch(function () {
-          note.textContent = "Something went wrong. Try again.";
-        }).finally(function () {
-          setBusy(false);
-        });
+        Promise.allSettled(senders.map(function (send) { return send(address); }))
+          .then(function (results) {
+            var ok = results.some(function (r) { return r.status === "fulfilled"; });
+            if (!ok) throw new Error("all destinations failed");
+            remember(address);
+            showDone();
+          })
+          .catch(function () {
+            note.textContent = "Something went wrong. Try again.";
+          })
+          .finally(function () {
+            setBusy(false);
+          });
       });
     })();
   </script>
