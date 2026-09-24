@@ -132,7 +132,14 @@ The palette is the §2.2 luminance ladder, unchanged. There is no accent. The pr
 .done { padding: 20px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
 .done .headline { font: 600 17px/1.5 var(--font-body); color: var(--text); }
 .done .sub      { font: 400 13px/1.5 var(--font-body); color: var(--text-muted); }
+.done .share    { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font: 400 13px/1.5 var(--font-body); color: var(--text-secondary); }
 /* Static. No hover (not interactive). Enters with the shared 220ms fade-up. */
+```
+
+### Invite line (above the form)
+```css
+.invite { margin: 0 0 12px; font: 500 15px/1.5 var(--font-body); color: var(--text-secondary); }
+/* "Be first in the room." One line, no animation. */
 ```
 
 ### Links (footer only)
@@ -218,7 +225,7 @@ None. The background is flat `--bg` black with no decoration and no motion. The 
 
 ### Do
 - Use only the §2.2 tokens. If a colour is not in `:root`, it does not exist.
-- Keep the existing copy verbatim: wordmark, tagline, pitch, COMING SOON, App Store, GET NOTIFIED, "You're on the list.", footer.
+- Keep the existing copy verbatim: wordmark, tagline, pitch, COMING SOON, App Store, "Be first in the room.", REQUEST ACCESS, "Early access opens in waves. We'll also email you on launch day.", "You're on the list.", "We'll be in touch when your invite is ready.", the share line, footer.
 - Keep the existing email capture behaviour (endpoint constant → JSON POST; fallback → mailto + localStorage; honeypot; inline validation).
 - Keep the background flat black. No decorative shapes, rings, patterns or ambient motion behind the content.
 - Keep every transition between 150 and 250ms with ease-out.

@@ -244,11 +244,26 @@
     .done p { margin: 0; }
     .done .headline { font-size: 17px; font-weight: 600; color: var(--text); }
     .done .sub { margin-top: 4px; font-size: 13px; color: var(--text-muted); }
+    .capture.is-done .invite,
+    .capture.is-done .consent,
     .capture.is-done form,
     .capture.is-done .note { display: none; }
     .capture.is-done .done { display: block; }
 
     /* ── Footer ─────────────────────────────────────────────────────── */
+    .invite {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .done .share {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
     .consent { margin-top: 12px; color: var(--text-muted); font-size: 13px; line-height: 1.5; }
     .consent a, footer a { color: var(--text-secondary); text-decoration: underline; text-underline-offset: 2px; }
     .consent a:hover, footer a:hover { color: var(--text); }
@@ -304,22 +319,25 @@
       }
       main { max-width: min(960px, 84vw); padding: 8px 0; }
 
-      .logo      { width: min(36vw, 38vh, 480px); margin-bottom: clamp(20px, 3vh, 32px); }
+      .logo      { width: min(36vw, 36vh, 480px); margin-bottom: clamp(20px, 3vh, 32px); }
       .wordmark  { font-size: clamp(28px, min(3vw, 4.4vh), 44px); }
       .tagline   { margin-top: clamp(12px, 2vh, 20px); font-size: clamp(17px, min(1.5vw, 2.4vh), 22px); }
       .pitch     { font-size: clamp(15px, min(1.3vw, 2vh), 19px); max-width: 44ch; }
 
-      .soon      { margin-top: clamp(32px, 5.5vh, 64px); font-size: clamp(72px, min(8vw, 11vh), 128px); }
+      .soon      { margin-top: clamp(28px, 4.5vh, 56px); font-size: clamp(72px, min(8vw, 11vh), 128px); }
       .store     { margin-top: clamp(10px, 1.4vh, 14px); font-size: clamp(13px, min(1vw, 1.5vh), 15px); }
 
-      .capture   { margin-top: clamp(28px, 4vh, 48px); max-width: min(560px, 46vw); }
+      .capture   { margin-top: clamp(20px, 2.8vh, 40px); max-width: min(560px, 46vw); }
+      .invite    { margin-bottom: clamp(8px, 1.2vh, 14px); font-size: clamp(15px, min(1.2vw, 1.9vh), 18px); }
+      .done        { padding: clamp(14px, 2vh, 20px) 24px; }
+      .done .share { margin-top: 10px; padding-top: 10px; }
       .field, .btn { height: clamp(48px, 6vh, 56px); }
       .field     { font-size: clamp(16px, min(1.25vw, 2vh), 18px); }
       .btn       { font-size: clamp(13px, min(1.05vw, 1.6vh), 15px); padding: 0 clamp(24px, 2vw, 32px); }
       .note      { min-height: 0; }
       .note:empty{ display: none; }
 
-      footer     { padding-top: clamp(12px, 2vh, 24px); }
+      footer     { padding-top: clamp(10px, 1.5vh, 20px); }
 
     }
 
@@ -377,6 +395,7 @@
 
     <div class="capture" id="capture">
       <!-- No-JS fallback: posts the address as a plain-text email draft. JS below intercepts. -->
+      <p class="invite">Be first in the room.</p>
       <form id="notify" action="mailto:hello@joinblacklink.com?subject=Blacklink%20waitlist" method="post" enctype="text/plain" novalidate>
         <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
         <input
@@ -392,13 +411,14 @@
           aria-label="Email address"
           required
         >
-        <button class="btn" type="submit" id="submit">Get notified</button>
+        <button class="btn" type="submit" id="submit">Request access</button>
       </form>
       <p class="note" id="note" role="status" aria-live="polite"></p>
-      <p class="consent">We’ll email you when Blacklink launches. No spam. <a href="/privacy">Privacy Policy</a>.</p>
+      <p class="consent">Early access opens in waves. We’ll also email you on launch day. No spam. <a href="/privacy">Privacy Policy</a>.</p>
       <div class="done" id="done" role="status" aria-live="polite">
         <p class="headline">You’re on the list.</p>
-        <p class="sub">We’ll email you the day Blacklink hits the App Store.</p>
+        <p class="sub">We’ll be in touch when your invite is ready.</p>
+        <p class="share">Know someone you’d build with? Send them joinblacklink.com.</p>
       </div>
     </div>
     </div>
@@ -440,7 +460,7 @@
 
       function setBusy(busy) {
         button.disabled = busy;
-        button.textContent = busy ? "Sending" : "Get notified";
+        button.textContent = busy ? "Sending" : "Request access";
       }
 
       form.addEventListener("submit", function (event) {
