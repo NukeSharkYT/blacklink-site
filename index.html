@@ -55,7 +55,6 @@
       /* DESIGN.md §7 · motion (§2.4: 150–250ms, ease-out) */
       --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
       --t-fast: 150ms;
-      --t-beat: 200ms;
       --t-enter: 220ms;
 
       color-scheme: dark;
@@ -84,38 +83,6 @@
         max(20px, env(safe-area-inset-bottom))
         max(20px, env(safe-area-inset-left));
     }
-
-    /* ── DESIGN.md §7 · ambient layer: "The Table" ──────────────────
-       War-room geometry from brief §4. Hairline at --surface luminance.
-       One seat at a time steps to --border over 200ms (presence beat). */
-    .ambient {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      overflow: hidden;
-      pointer-events: none;
-      background: var(--bg);
-    }
-    .ambient svg {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: min(130vw, 1200px);
-      height: auto;
-      transform: translate(-50%, -44%); /* phones: sits under the display line, clear of the pitch */
-      fill: none;
-    }
-    .ambient ellipse,
-    .ambient .seat {
-      fill: none;
-      stroke: var(--surface);
-      stroke-width: 1px;
-      vector-effect: non-scaling-stroke; /* hairline at any scale */
-    }
-    .ambient .seat {
-      transition: stroke var(--t-beat) var(--ease-out);
-    }
-    .ambient .seat.lit { stroke: var(--border); }
 
     /* ── Layout (DESIGN.md §5) ──────────────────────────────────────── */
     main, footer { position: relative; z-index: 1; }
@@ -312,7 +279,6 @@
       .field, .btn { height: 52px; }
       .field { font-size: 17px; }
       .btn { font-size: 14px; padding: 0 28px; }
-      .ambient svg { width: min(100vw, 1200px); transform: translate(-50%, -50%); }
     }
 
     /* Short phones (iPhone SE class, ≤ 720px tall): compact the rhythm so the
@@ -355,7 +321,6 @@
 
       footer     { padding-top: clamp(12px, 2vh, 24px); }
 
-      .ambient svg { width: min(100vw, 1200px); transform: translate(-50%, -50%); }
     }
 
     /* Short landscape screens (≤ 800px tall, e.g. 1366×768): compress the
@@ -393,28 +358,10 @@
     @media (prefers-reduced-motion: reduce) {
       .fade-up { animation: none; opacity: 1; transform: none; }
       .field, .btn { transition: none; }
-      .ambient .seat { transition: none; }
     }
   </style>
 </head>
 <body>
-
-  <!-- Ambient layer: the war-room table. Seat anchors are brief §4 percentages of a 100×62 box. -->
-  <div class="ambient" aria-hidden="true">
-    <svg viewBox="0 0 100 62" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true" role="presentation">
-      <ellipse cx="48.5" cy="35.3" rx="24" ry="10" />
-      <circle class="seat" cx="34" cy="22.9" r="2.4" />
-      <circle class="seat" cx="44" cy="22.9" r="2.4" />
-      <circle class="seat" cx="54" cy="22.9" r="2.4" />
-      <circle class="seat" cx="64" cy="22.9" r="2.4" />
-      <circle class="seat" cx="33" cy="47.7" r="2.4" />
-      <circle class="seat" cx="44" cy="47.7" r="2.4" />
-      <circle class="seat" cx="55" cy="47.7" r="2.4" />
-      <circle class="seat" cx="66" cy="47.7" r="2.4" />
-      <circle class="seat" cx="20" cy="32.2" r="2.4" />
-      <circle class="seat" cx="77" cy="32.2" r="2.4" />
-    </svg>
-  </div>
 
   <main class="fade-up">
     <div class="brand">
@@ -542,35 +489,6 @@
           setBusy(false);
         });
       });
-
-      /* ── Presence beat (DESIGN.md §7, "The Table") ────────
-         Every 5–9s one seat steps up to --border for ~4s, then steps back.
-         Each step is a 200ms ease-out stroke transition in CSS. Nothing
-         else on the layer ever moves. Skipped under reduced motion and
-         while the tab is hidden. */
-      var seats = Array.prototype.slice.call(document.querySelectorAll(".ambient .seat"));
-      var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (seats.length && !reduceMotion) {
-        var HOLD = 4000, MIN_GAP = 5000, GAP_RANGE = 4000;
-        var current = -1;
-
-        function schedule() {
-          setTimeout(beat, MIN_GAP + Math.random() * GAP_RANGE);
-        }
-        function beat() {
-          if (document.hidden) { schedule(); return; }
-          var next;
-          do { next = Math.floor(Math.random() * seats.length); } while (next === current);
-          current = next;
-          var seat = seats[next];
-          seat.classList.add("lit");
-          setTimeout(function () {
-            seat.classList.remove("lit");
-            schedule();
-          }, HOLD);
-        }
-        schedule();
-      }
     })();
   </script>
 </body>

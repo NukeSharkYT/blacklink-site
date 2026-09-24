@@ -23,7 +23,7 @@ The palette is the §2.2 luminance ladder, unchanged. There is no accent. The pr
 :root {
   /* Backgrounds */
   --bg: #000000;              /* page */
-  --bg-elevated: #0a0a0a;     /* ambient layer floor (background art never brighter than --surface) */
+  --bg-elevated: #0a0a0a;     /* reserved; not used on this page */
   --surface: #141414;         /* input, confirmation card */
   --surface-hover: #1c1c1c;   /* pressed/hover surface */
 
@@ -60,8 +60,7 @@ The palette is the §2.2 luminance ladder, unchanged. There is no accent. The pr
 **Color Rules:**
 - Every colour in `index.html` is a `var(--…)` reference. Zero hard-coded hex outside `:root`.
 - Meaningful text never uses `--text-muted`. It fails AA on black; use it only where losing the text loses nothing.
-- No hue. No gradients that introduce hue. A luminance-only gradient (black → #0a0a0a) is allowed for the ambient layer floor and nowhere else.
-- Ambient/background art is capped at `--border` (#262626) brightness. Content always out-luminates the background.
+- No hue. No gradients of any kind. The page background is flat `--bg`.
 - Error and success states are communicated by wording, never by red/green.
 
 ## 3. Typography Rules
@@ -169,7 +168,6 @@ None on this page. If ever needed: 12px Inter 500, uppercase, `--text-muted` on 
 ```css
 body { min-height: 100dvh; display: flex; flex-direction: column; }
 main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-.ambient { position: fixed; inset: 0; z-index: 0; pointer-events: none; }  /* background layer */
 main, footer { position: relative; z-index: 1; }
 ```
 
@@ -177,7 +175,6 @@ main, footer { position: relative; z-index: 1; }
 
 | Level | Treatment | Use |
 |-------|-----------|-----|
-| Ambient | `--bg` floor, art capped at `--border` luminance | background layer behind everything |
 | Flat | `--bg`, no border | page, text |
 | Hairline | 1px `--border` on `--surface` | input, confirmation card |
 | Focused | 1px `--border-strong` | focused input |
@@ -206,22 +203,14 @@ None. The page does not scroll on a phone ≥ 667px tall; where it does, nothing
 ### Hover & Focus States
 As specified per component in §4. Every interactive element (input, button, footer link) has hover + focus-visible.
 
-### Special Effects — ambient background layer ("The Table")
-The one addition beyond the current page. Derived from the war room (§3, §4), not from a generic effect library.
-
-- A fixed, full-viewport layer behind the content draws the war-room table as hairline geometry: one oval table outline and the 10 seat rings at the exact §4 seat coordinates (percentages of the layer).
-- Rendered as inline SVG (viewBox 100×62), `vector-effect: non-scaling-stroke` on every shape so the line is exactly 1px at any scale, stroke colour `--surface` (#141414) at rest — present but barely there. On phones the SVG is drawn at 130vw and offset slightly below centre (translate -50%, -44%) so the table sits under the display line and no seat ring touches the pitch copy; on desktop it is capped at 1200px and centred.
-- **Presence beat**: on a slow cadence (one event every 5–9s, randomised), a single seat ring brightens from `--surface` to `--border` (#262626) over **200ms ease-out**, holds, then returns over **200ms ease-out** after ~4s. At most one seat lit at a time. Reads as "someone just sat down at the table" — live presence, which is the product's first pillar.
-- Every visible change is a discrete 200ms ease-out opacity step. There is no continuous tween, no drift, no rotation, no particles. Between beats the layer is perfectly still. This is how a background concept stays inside §2.4.
-- Cap: the lit ring never exceeds `--border` luminance, so it can never compete with `--text-muted` copy.
-- Implementation: CSS transition on `stroke` / `opacity` toggled by a tiny `setInterval` (~30 lines). Idle-safe: paused when `document.hidden`.
+### Special Effects
+None. The background is flat `--bg` black with no decoration and no motion. The only animation on the page is the entrance fade-up.
 
 ### Reduced Motion
 ```css
 @media (prefers-reduced-motion: reduce) {
   .fade-up { animation: none; opacity: 1; transform: none; }
   .btn, .field, a { transition: none; }
-  .ambient .seat { transition: none; }   /* JS also skips the presence beat entirely */
 }
 ```
 
@@ -231,7 +220,7 @@ The one addition beyond the current page. Derived from the war room (§3, §4), 
 - Use only the §2.2 tokens. If a colour is not in `:root`, it does not exist.
 - Keep the existing copy verbatim: wordmark, tagline, pitch, COMING SOON, App Store, GET NOTIFIED, "You're on the list.", footer.
 - Keep the existing email capture behaviour (endpoint constant → JSON POST; fallback → mailto + localStorage; honeypot; inline validation).
-- Let the background be felt, not seen: if a first-time viewer notices the table before the wordmark, it is too bright.
+- Keep the background flat black. No decorative shapes, rings, patterns or ambient motion behind the content.
 - Keep every transition between 150 and 250ms with ease-out.
 - Design phone-first at 375×667; desktop is the same composition with more air.
 - Keep the page one viewport tall on phones from 375×667 up: viewports ≤ 720px tall on phone widths use the compact rhythm in §9.
@@ -240,7 +229,7 @@ The one addition beyond the current page. Derived from the war room (§3, §4), 
 ### Don't
 - ❌ No hue anywhere — no accent, no coloured gradient, no coloured focus ring, no red error text.
 - ❌ No glow, text-shadow, box-shadow, backdrop-filter or blur.
-- ❌ No continuous ambient motion — no drifting, rotating, breathing, marquee, particles, smoke, aurora, silk, WebGL.
+- ❌ No background decoration or motion — no shapes, rings, table art, drifting, particles, smoke, aurora, silk, WebGL.
 - ❌ No per-character / split-text / scramble / typewriter text animation on any heading.
 - ❌ No magnetic buttons, cursor followers, click sparks or 3D tilt.
 - ❌ No scroll-driven anything. No sticky nav, no parallax, no pin.
@@ -265,12 +254,10 @@ The one addition beyond the current page. Derived from the war room (§3, §4), 
 - COMING SOON 72–128px via min(8vw, 11vh): always the largest element, roughly 3× the wordmark.
 - Controls 48–56px tall via 6vh; capture up to min(560px, 46vw).
 - Gaps scale with vh (logo→wordmark 20–32px, pitch→display 32–64px, store→capture 28–48px) so short viewports compress rhythm before type.
-- The table stays centred behind the display line, width min(100vw, 1200px).
 
 **Touch Targets:** input and button are 48px tall (≥ 44px). Full-width on phone.
 **Collapsing Strategy:** one centred column at every size and orientation. Only the scale, the form direction and the spacing steps change. Nothing is hidden.
 **Short phones (≤ 720px tall, < 768px wide):** logo 180px, top padding 16, main padding 8, display and capture gaps 32, note min-height 0. Same composition, smaller steps, so a 375×667 phone still shows everything without scrolling.
-**Ambient layer:** SVG uses `preserveAspectRatio="xMidYMid meet"` with an explicit width (130vw on phone, min(100vw, 1200px) on desktop) so seat percentages hold at any aspect ratio and the table always frames rather than crowds the content. Decoration never overlaps copy: on phones the table is offset below centre.
 
 ```css
 @media (min-width: 480px) { form { flex-direction: row; } }
