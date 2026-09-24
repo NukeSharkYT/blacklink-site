@@ -1,6 +1,6 @@
 # Blacklink Privacy Policy
 
-**Version 1.1 — effective 24 September 2026**
+**Version 1.2 — effective 24 September 2026**
 
 This policy explains what personal data Blacklink collects, why, who it is shared with, how long it is kept, and what rights you have. It covers the Blacklink app and the website at joinblacklink.com. We have written it in plain English on purpose. If anything is unclear, email us.
 
@@ -91,7 +91,7 @@ Your data is stored in the United Kingdom. Some of our providers (Apple, Expo, L
 - **Voice:** not stored at all.
 - **When you delete your account:** your profile, photo, messages, wins, seats, memberships, rank data, and blocks are deleted from our live systems immediately. Copies in encrypted backups expire within **30 days**.
 - **Reports and moderation records:** we keep a record of reports and the action taken for up to **12 months** after the case is closed, so we can identify repeat abuse and meet our online safety obligations. Where a report concerns illegal content we may keep records for longer if the law requires.
-- **Waiting-list emails:** until you unsubscribe or until early-access and launch communications end, whichever is sooner, after which they are deleted from Brevo.
+- **Waiting-list emails:** until you unsubscribe or until early-access and launch communications end, whichever is sooner, after which they are deleted from Brevo and from our database.
 - **Server logs:** up to 30 days.
 
 ## 8. Your rights
