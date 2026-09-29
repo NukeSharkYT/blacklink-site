@@ -1,6 +1,6 @@
 # Blacklink Privacy Policy
 
-**Version 1.2 — effective 24 September 2026**
+**Version 1.3 — effective 29 September 2026**
 
 This policy explains what personal data Blacklink collects, why, who it is shared with, how long it is kept, and what rights you have. It covers the Blacklink app and the website at joinblacklink.com. We have written it in plain English on purpose. If anything is unclear, email us.
 
@@ -70,6 +70,7 @@ We use a small number of service providers ("processors") to run Blacklink. They
 
 - **Supabase** — hosts our database, authentication, and file storage (profile photos). Our project is hosted in London, United Kingdom.
 - **LiveKit** — carries live voice chat in war rooms. Audio is streamed live and not stored. LiveKit routes it through whichever of its cloud servers are nearest to the people in the room, which may be outside the United Kingdom.
+- **OpenAI** — checks each profile photo with its moderation service before the photo can appear, to keep explicit, violent or self-harm images off Blacklink. Only the photo is sent, and only for that check. You are asked to agree before your first photo is checked. OpenAI may process it in the United States.
 - **Apple** — distributes the app through the App Store and delivers push notifications to iPhones.
 - **Expo** — provides the tools we use to build the app and route push notifications.
 - **Brevo** — sends emails to the waiting list (website only).
@@ -82,7 +83,7 @@ We may transfer the business, including this data, if Blacklink is sold or restr
 
 ## 6. International transfers
 
-Your data is stored in the United Kingdom. Some of our providers (Apple, Expo, LiveKit) may process limited technical data in the United States or elsewhere. Where that happens we rely on the safeguards recognised under UK and EU law, such as adequacy decisions, the UK International Data Transfer Agreement, or the EU Standard Contractual Clauses.
+Your data is stored in the United Kingdom. Some of our providers (Apple, Expo, LiveKit, OpenAI) may process limited technical data in the United States or elsewhere. Where that happens we rely on the safeguards recognised under UK and EU law, such as adequacy decisions, the UK International Data Transfer Agreement, or the EU Standard Contractual Clauses.
 
 ## 7. How long we keep your data
 
