@@ -18,11 +18,18 @@
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="favicon.png">
 
-  <!-- Type is self-hosted: no visitor data goes to Google, no cookie banner needed. -->
-  <link rel="stylesheet" href="fonts/fonts.css">
+  <!-- Type is self-hosted: no visitor data goes to Google, no cookie banner needed.
+       Faces are declared inline below (no render-blocking stylesheet); the two
+       faces used above the fold are preloaded. fonts/fonts.css still serves the legal pages. -->
+  <link rel="preload" href="fonts/ArchivoBlack-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/Inter-400.woff2" as="font" type="font/woff2" crossorigin>
 
   <style>
-    /* ── DESIGN.md §2 · colour tokens (the only place hex is allowed) ── */
+    @font-face { font-family: "Archivo Black"; font-weight: 400; font-display: swap; src: url("fonts/ArchivoBlack-400.woff2") format("woff2"); }
+    /* Inter-400/500/600.woff2 are the same variable file: declare it once so it downloads once. */
+    @font-face { font-family: "Inter"; font-weight: 400 600; font-display: swap; src: url("fonts/Inter-400.woff2") format("woff2"); }
+
+    /* ── DESIGN.md §2 · colour tokens (values unchanged; the only place hex is allowed) ── */
     :root {
       --bg: #000000;
       --bg-elevated: #0a0a0a;
@@ -33,6 +40,7 @@
       --text: #ffffff;
       --text-secondary: #a3a3a3;
       --text-muted: #767676;
+      --text-hint: #8a8a8a;      /* new: placeholder grey, 5.3:1 on --surface (muted is 4.05:1 there) */
       --inverse-bg: #ffffff;
       --inverse-text: #000000;
       --accent: var(--text);
@@ -43,25 +51,45 @@
       --error: var(--text-secondary);
       --warning: var(--text-secondary);
 
-      /* DESIGN.md §3 · type */
+      /* type */
       --font-display: "Archivo Black", "Arial Black", Impact, sans-serif;
       --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-      /* DESIGN.md §4 · shape */
+      /* shape */
       --radius-input: 8px;
       --radius-card: 12px;
       --radius-pill: 999px;
 
-      /* DESIGN.md §7 · motion (§2.4: 150–250ms, ease-out) */
-      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      /* layout: one centred column, fluid spacing scale */
+      --col: 520px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px;
+      --s5: clamp(20px, 2.6vh, 28px);
+      --s6: clamp(24px, 3.6vh, 40px);
+      --control-h: 56px;
+
+      /* ── Motion: every timing lives here ─────────────────────────────
+         Entrance runs once per session; repeat visits use --t-quick.   */
+      --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
       --t-fast: 150ms;
-      --t-enter: 220ms;
+      --t-ambient-delay: 150ms;  --t-ambient-dur: 1200ms;
+      --t-logo-delay: 300ms;     --t-logo-dur: 900ms;
+      --t-head-delay: 700ms;     --t-head-dur: 800ms;
+      --t-sub-delay: 820ms;
+      --t-table-delay: 1100ms;   --t-table-dur: 1400ms;
+      --t-seat-stagger: 60ms;    --t-seat-dur: 500ms;
+      --t-soon-delay: 1500ms;    --t-soon-dur: 600ms;
+      --t-form-delay: 1800ms;    --t-form-dur: 400ms;
+      --t-sweep-delay: 2600ms;   --t-sweep-dur: 1200ms;
+      --t-quick: 400ms;          /* repeat visit in the same session */
+      --t-reduced: 200ms;        /* prefers-reduced-motion: one opacity fade */
+      --t-drift: 50s;            /* ambient light loop */
+      --t-pulse: 4s;             /* presence dot */
+      --rise: 12px;
 
       color-scheme: dark;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
-
     html, body { margin: 0; padding: 0; background: var(--bg); }
 
     body {
@@ -78,349 +106,361 @@
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
       padding:
-        max(24px, env(safe-area-inset-top))
+        max(var(--s5), env(safe-area-inset-top))
         max(20px, env(safe-area-inset-right))
-        max(20px, env(safe-area-inset-bottom))
+        max(var(--s4), env(safe-area-inset-bottom))
         max(20px, env(safe-area-inset-left));
     }
 
-    /* ── Layout (DESIGN.md §5) ──────────────────────────────────────── */
-    main, footer { position: relative; z-index: 1; }
-    .brand, .action { width: 100%; }
+    .sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 
+    /* ── Ambient layer: light, the empty table, vignette, grain ─────── */
+    .ambient { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .ambient > * { position: absolute; }
+    .light { inset: -30%; }
+    .light i {
+      position: absolute; inset: 0;
+      background: radial-gradient(closest-side, rgba(var(--text-rgb), 0.07), rgba(var(--text-rgb), 0.025) 55%, transparent);
+      animation: drift var(--t-drift) ease-in-out infinite alternate;
+    }
+    @keyframes drift {
+      0%   { transform: translate3d(-4%, -3%, 0); }
+      50%  { transform: translate3d(3%, 1%, 0); }
+      100% { transform: translate3d(-1%, 4%, 0); }
+    }
+    .table {
+      left: 50%; top: 50%;
+      width: clamp(560px, 118vmin, 1200px); height: auto;
+      transform: translate(-50%, -50%);
+      overflow: visible;
+    }
+    .table .rim, .table .seat { fill: none; stroke: var(--text); stroke-width: 1.4; }
+    .table .rim  { stroke-opacity: 0.16; stroke-dasharray: 1; stroke-dashoffset: 0; }
+    .table .seat { stroke-opacity: 0.22; transform-box: fill-box; transform-origin: center; transition: fill-opacity 500ms var(--ease), stroke-opacity 500ms var(--ease); fill: var(--text); fill-opacity: 0; }
+    .table .seat.on { fill-opacity: 0.95; stroke-opacity: 1; }
+    .table .ring { fill: none; stroke: var(--text); stroke-width: 1.4; opacity: 0; transform-box: fill-box; transform-origin: center; }
+    .table .ring.go { animation: ring 1600ms var(--ease) forwards; }
+    @keyframes ring { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 0; transform: scale(3.2); } }
+    .vignette { inset: 0; background: radial-gradient(ellipse 75% 70% at 50% 50%, transparent 35%, rgba(var(--bg-rgb), 0.75) 75%, var(--bg) 100%); }
+    .grain {
+      inset: 0; opacity: 0.06;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 160px 160px;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────────── */
+    main, footer { position: relative; }   /* tree order paints them above .ambient */
     main {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       text-align: center;
-      width: 100%;
-      max-width: 560px;
+      width: 100%; max-width: var(--col);
       margin: 0 auto;
-      padding: 32px 0;
+      padding: var(--s4) 0;
     }
+    .brand, .action { width: 100%; }
 
-    /* ── Entrance (DESIGN.md §7): one block, one fade-up ────────────── */
-    .fade-up {
-      opacity: 0;
-      transform: translateY(8px);
-      animation: fade-up var(--t-enter) var(--ease-out) forwards;
+    /* Hierarchy: logo → headline → form; everything else quieter. */
+    .logo-wrap { position: relative; display: block; width: min(400px, 60vw, 38vh); margin: 0 auto var(--s5); isolation: isolate; }
+    .logo-wrap::before {   /* pure-black pool behind the logo so the PNG's black background has no visible edge on any browser */
+      content: ""; position: absolute; inset: -45% -30%; z-index: -1; pointer-events: none;
+      background: radial-gradient(closest-side, var(--bg) 84%, rgba(var(--bg-rgb), 0) 100%);
     }
-    @keyframes fade-up { to { opacity: 1; transform: none; } }
-
-    /* ── Brand block ────────────────────────────────────────────────── */
-    .logo {
-      display: block;
-      width: min(240px, 72vw);
-      height: auto;
-      margin: 0 auto 24px;
-      user-select: none;
-      -webkit-user-drag: none;
+    .logo-clip { position: relative; display: block; overflow: hidden; }
+    .logo { display: block; width: 100%; height: auto; user-select: none; -webkit-user-drag: none; }
+    .logo-clip::after {   /* one specular sweep, overlay-blended inside the logo box so black stays black */
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(105deg, transparent 35%, rgba(var(--text-rgb), 0.55) 50%, transparent 65%);
+      mix-blend-mode: overlay; opacity: 0; transform: translateX(-60%);
     }
 
     .wordmark {
       margin: 0;
-      font-family: var(--font-display);
-      font-weight: 400;
-      font-size: clamp(26px, 7vw, 32px);
-      line-height: 1;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-family: var(--font-display); font-weight: 400;
+      font-size: clamp(30px, 6.6vw, 50px); line-height: 1;
+      letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--text);
     }
+    .tagline { margin: var(--s3) 0 0; font-size: clamp(16px, 0.9vw + 12px, 20px); font-weight: 500; color: var(--text-secondary); }
+    .pitch { margin: var(--s2) auto 0; max-width: 40ch; font-size: clamp(14px, 0.4vw + 13px, 16px); color: var(--text-secondary); text-wrap: balance; }
 
-    .tagline {
-      margin: 16px 0 0;
-      font-size: 17px;
-      font-weight: 500;
-      color: var(--text-secondary);
+    /* Hover / tap reveals: two phrases, one reserved line, no layout shift */
+    .rv {
+      position: relative; padding: 0; border: 0; background: none;
+      font: inherit; color: inherit; cursor: pointer;
+      -webkit-appearance: none; appearance: none; text-decoration: none;
+      border-bottom: 1px dotted rgba(var(--text-rgb), 0.45);   /* Safari ignores text-decoration on buttons */
+      line-height: inherit;
+      -webkit-tap-highlight-color: transparent;
     }
+    .rv::before { content: ""; position: absolute; inset: -12px -6px; }   /* ≥44px tap target, no layout cost */
+    .rv[aria-expanded="true"] { color: var(--text); }
+    @media (hover: hover) { .rv:hover { color: var(--text); } }
+    .rv-line { display: grid; margin: var(--s2) auto 0; max-width: 40ch; min-height: 3em; font-size: 13px; color: var(--text-secondary); }
+    @media (min-width: 600px) { .rv-line { min-height: 1.5em; } }
+    .rv-line span { grid-area: 1 / 1; opacity: 0; transform: translateY(-3px); transition: opacity 300ms var(--ease), transform 300ms var(--ease); }
+    .rv-line span.on { opacity: 1; transform: none; }
 
-    .pitch {
-      margin: 8px auto 0;
-      max-width: 34ch;
-      font-size: 15px;
-      color: var(--text-secondary);
-      text-wrap: balance;
-    }
-
-    /* ── Display ────────────────────────────────────────────────────── */
     .soon {
-      margin: 56px 0 0;
-      font-family: var(--font-display);
-      font-weight: 400;
-      font-size: clamp(40px, 13vw, 84px);
-      line-height: 0.95;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--text);
+      margin: var(--s6) 0 0;
+      font-family: var(--font-display); font-weight: 400;
+      font-size: clamp(34px, 7.4vw, 60px); line-height: 0.95;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--text-secondary);   /* quieter than the headline; set to var(--text) for the old weight */
     }
+    .store { margin: var(--s3) 0 0; font-size: 12px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
 
-    .store {
-      margin: 12px 0 0;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-muted);
+    /* ── The form: the focal point ──────────────────────────────────── */
+    .capture { width: 100%; max-width: 440px; margin: var(--s6) auto 0; }
+    .stage { display: grid; }
+    .stage > * { grid-area: 1 / 1; }            /* form and confirmation share one reserved cell */
+    .invite { margin: 0 0 var(--s3); font-size: 15px; font-weight: 500; color: var(--text); }
+
+    form { display: flex; flex-direction: column; gap: var(--s3); }
+    .fieldwrap { position: relative; flex: 1 1 auto; min-width: 0; }
+    .fieldwrap::after {   /* soft 1px outer ring on focus, opacity only */
+      content: ""; position: absolute; inset: -4px; border-radius: calc(var(--radius-card) + 4px);
+      border: 1px solid rgba(var(--text-rgb), 0.28); opacity: 0; pointer-events: none;
+      transition: opacity 250ms var(--ease);
     }
-
-    /* ── Email capture (DESIGN.md §4) ───────────────────────────────── */
-    .capture {
-      width: 100%;
-      max-width: 400px;
-      margin: 48px auto 0;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
+    .fieldwrap:focus-within::after { opacity: 1; }
     .field {
-      flex: 1 1 auto; /* basis auto keeps height:48px in the stacked (column) layout */
-      min-width: 0;
-      height: 48px;
-      padding: 0 16px;
-      font: inherit;
-      font-size: 16px; /* ≥16px keeps iOS Safari from zooming on focus */
-      line-height: 1;
-      color: var(--text);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-input);
-      outline: none;
-      appearance: none;
-      -webkit-appearance: none;
-      transition: border-color var(--t-fast) ease-out;
+      display: block; width: 100%; height: var(--control-h);
+      padding: 0 18px;
+      font: inherit; font-size: 16px;   /* ≥16px: iOS never zooms */
+      color: var(--text); background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius-card);
+      outline: none; appearance: none; -webkit-appearance: none;
+      transition: border-color 250ms var(--ease);
     }
-    .field::placeholder { color: var(--text-muted); }
-    .field:hover { border-color: var(--border-strong); }
-    .field:focus { border-color: var(--border-strong); }
-    .field:user-invalid { border-color: var(--border-strong); }
-    .field[disabled] { opacity: 0.6; }
+    @media (hover: hover) { .field:hover { border-color: var(--border-strong); } }
+    .field:focus { border-color: var(--text-muted); }
+    .field[aria-invalid="true"] { border-color: var(--text-secondary); }
+    .field::placeholder { color: transparent; }
+    .hint {   /* visible placeholder that eases up on focus and leaves once typing starts */
+      position: absolute; left: 19px; top: 50%; pointer-events: none;
+      font-size: 16px; color: var(--text-hint);
+      transform: translateY(-50%);
+      transition: transform 300ms var(--ease), opacity 300ms var(--ease);
+    }
+    .field:focus + .hint { transform: translateY(calc(-50% - 4px)); }
+    .field:not(:placeholder-shown) + .hint { opacity: 0; }
+    .nudge { animation: nudge 320ms var(--ease); }
+    @keyframes nudge { 20% { transform: translateX(-4px); } 50% { transform: translateX(4px); } 80% { transform: translateX(-2px); } }
 
     .btn {
-      height: 48px;
-      padding: 0 24px;
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 600;
-      line-height: 1;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--inverse-text);
-      background: var(--inverse-bg);
-      border: 0;
-      border-radius: var(--radius-pill);
-      cursor: pointer;
-      white-space: nowrap;
+      position: relative; overflow: hidden;
+      height: var(--control-h); padding: 0 28px;
+      font-family: var(--font-body); font-size: 13px; font-weight: 600; line-height: 1;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--inverse-text); background: var(--inverse-bg);
+      border: 0; border-radius: var(--radius-pill);
+      cursor: pointer; white-space: nowrap;
       -webkit-tap-highlight-color: transparent;
-      transition: opacity var(--t-fast) ease-out, transform var(--t-fast) ease-out;
+      --lift: 0px; --sc: 1;
+      transform: translate(var(--mx, 0px), calc(var(--my, 0px) + var(--lift))) scale(var(--sc));
+      transition: transform 250ms var(--ease);
     }
-    .btn:hover { opacity: 0.9; }
-    .btn:active { transform: scale(0.98); }
+    @media (hover: hover) { .btn:hover { --lift: -1px; } }
+    .btn:active { --sc: 0.985; }
     .btn:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
-    .btn[disabled] { opacity: 0.6; cursor: default; transform: none; }
-
-    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
-
-    .note {
-      min-height: 1.5em;
-      margin: 12px 0 0;
-      font-size: 12px;
-      color: var(--error);
+    .btn[disabled] { cursor: default; --lift: 0px; }
+    .btn .lbl { display: block; transition: opacity 200ms var(--ease); }
+    .btn::after {   /* slow inner light sweep on hover */
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(100deg, transparent 30%, rgba(var(--bg-rgb), 0.08) 50%, transparent 70%);
+      transform: translateX(-110%);
     }
+    @media (hover: hover) { .btn:hover:not([disabled])::after { animation: sheen 1400ms var(--ease); } }
+    @keyframes sheen { to { transform: translateX(110%); } }
+    .btn .bar {   /* sending: thin progress line along the base */
+      position: absolute; left: 0; bottom: 14px; width: 30%; height: 1px;
+      background: currentColor; opacity: 0;
+    }
+    .btn.busy .lbl { opacity: 0; }
+    .btn.busy .bar { opacity: 1; animation: bar 1100ms linear infinite; }
+    @keyframes bar { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
 
-    .done {
-      display: none;
-      padding: 20px 24px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-    }
-    .done p { margin: 0; }
-    .done .headline { font-size: 17px; font-weight: 600; color: var(--text); }
-    .done .sub { margin-top: 4px; font-size: 13px; color: var(--text-muted); }
-    .capture.is-done .invite,
-    .capture.is-done .consent,
-    .capture.is-done form,
-    .capture.is-done .note { display: none; }
-    .capture.is-done .done { display: block; }
-
-    /* ── Footer ─────────────────────────────────────────────────────── */
-    .invite {
-      margin: 0 0 12px;
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-    .done .share {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-    .consent { margin-top: 12px; color: var(--text-muted); font-size: 13px; line-height: 1.5; }
+    .note { min-height: 1.5em; margin: var(--s2) 0 0; font-size: 13px; color: var(--error); }
+    .consent { margin: var(--s1) 0 0; font-size: 13px; line-height: 1.5; color: var(--text-muted); }
     .consent a, footer a { color: var(--text-secondary); text-decoration: underline; text-underline-offset: 2px; }
     .consent a:hover, footer a:hover { color: var(--text); }
-    footer p { margin: 4px 0; }
-    footer {
-      padding-top: 24px;
-      text-align: center;
-      font-size: 12px;
-      color: var(--text-muted);
+    .consent a:focus-visible, footer a:focus-visible, .rv:focus-visible, .copy:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; border-radius: 2px; }
+    .dot {   /* presence cue: honest, pre-launch */
+      display: inline-block; width: 6px; height: 6px; margin: 0 8px 0 0; vertical-align: 1px;
+      border-radius: 50%; background: var(--text);
+      animation: pulse var(--t-pulse) ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 0.35; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1); } }
+
+    /* Success: swap in place, no height change */
+    .form-block { transition: opacity 400ms var(--ease), transform 400ms var(--ease); }
+    .done { align-self: center; visibility: hidden; }
+    .done > * { opacity: 0; transform: translateY(8px); transition: opacity 500ms var(--ease), transform 500ms var(--ease); }
+    .done .headline { margin: 0; font-family: var(--font-body); font-size: 20px; font-weight: 600; color: var(--text); outline: none; }
+    .done .sub { margin: var(--s2) 0 0; font-size: 15px; color: var(--text-secondary); }
+    .done .share { margin: var(--s4) auto 0; padding-top: var(--s4); max-width: 34ch; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-secondary); }
+    .copy {
+      display: inline-grid; padding: 0; border: 0; background: none; cursor: pointer;
+      font: inherit; color: var(--text); text-decoration: underline; text-underline-offset: 3px;
+      position: relative;
+    }
+    .copy::before { content: ""; position: absolute; inset: -14px -6px; }
+    .copy > span { grid-area: 1 / 1; transition: opacity 200ms var(--ease); }
+    .copy > span + span, .copy.copied > span:first-child { opacity: 0; }
+    .copy.copied > span + span { opacity: 1; }
+    .capture.is-done .form-block { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+    .capture.is-done .done { visibility: visible; }
+    .capture.is-done .done > * { opacity: 1; transform: none; }
+    .capture.is-done .done .headline { transition-delay: 250ms; }
+    .capture.is-done .done .sub { transition-delay: 450ms; }
+    .capture.is-done .done .share { transition-delay: 650ms; }
+
+    footer { padding-top: var(--s5); text-align: center; font-size: 12px; color: var(--text-muted); }
+    footer p { margin: 2px 0; }
+    .consent a { position: relative; }
+    .consent a::before { content: ""; position: absolute; inset: -14px -4px; }   /* 44px tap target, no layout cost */
+    @media (pointer: coarse) {   /* touch: footer links get real 44px rows */
+      footer p { margin: 0; }
+      footer a { display: inline-block; padding: 14px 4px; }
     }
 
-    /* ── Responsive (DESIGN.md §9) ──────────────────────────────────── */
+    /* ── Entrance: one motion, then stillness ───────────────────────── */
+    @keyframes rise { from { opacity: var(--o0, 0); transform: translateY(var(--rise)); } to { opacity: 1; transform: none; } }
+    @keyframes logo-in { from { opacity: 0.01; transform: translateY(var(--rise)); filter: blur(3px); } to { opacity: 1; transform: none; filter: blur(0); } }
+    /* Logo and headline start at 1% (still black to the eye) rather than 0%:
+       browsers skip fully transparent paints when timing Largest Contentful Paint. */
+    .e-head { --o0: 0.01; }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+    @keyframes sweep { 0% { opacity: 1; transform: translateX(-60%); } 100% { opacity: 1; transform: translateX(60%); } }
+
+    .vignette, .grain, .light { animation: fade var(--t-ambient-dur) var(--ease) var(--t-ambient-delay) both; }
+    .grain { animation-name: grain-in; }
+    @keyframes grain-in { from { opacity: 0; } to { opacity: 0.06; } }
+    .logo-wrap  { animation: logo-in var(--t-logo-dur) var(--ease) var(--t-logo-delay) both; }
+    .logo-clip::after { animation: sweep var(--t-sweep-dur) var(--ease) var(--t-sweep-delay) 1 both; }
+    .e-head { animation: rise var(--t-head-dur) var(--ease) var(--t-head-delay) both; }
+    .e-sub  { animation: rise var(--t-head-dur) var(--ease) var(--t-sub-delay) both; }
+    .table .rim  { animation: draw var(--t-table-dur) var(--ease) var(--t-table-delay) both; }
+    .table .seat { animation: fade var(--t-seat-dur) var(--ease) calc(var(--t-table-delay) + var(--i) * var(--t-seat-stagger)) both; }
+    .e-soon { animation: rise var(--t-soon-dur) var(--ease) var(--t-soon-delay) both; }
+    .e-form { animation: rise var(--t-form-dur) var(--ease) var(--t-form-delay) both; }
+    footer  { animation: fade var(--t-form-dur) var(--ease) var(--t-form-delay) both; }
+    html.entering .logo-wrap, html.entering .e-head, html.entering .e-sub, html.entering .e-soon, html.entering .e-form { will-change: transform, opacity; }
+
+    /* Repeat visit in the same session: a short fade, nothing else */
+    html.quick .vignette, html.quick .light, html.quick .logo-wrap, html.quick .e-head, html.quick .e-sub,
+    html.quick .table .seat, html.quick .e-soon, html.quick .e-form, html.quick footer { animation: fade var(--t-quick) ease-out both; }
+    html.quick .grain { animation: grain-in var(--t-quick) ease-out both; }
+    html.quick .table .rim { animation: none; }
+    html.quick .logo-clip::after { animation: none; }
+
+    /* ── Responsive ─────────────────────────────────────────────────── */
     @media (min-width: 480px) {
       form { flex-direction: row; }
       .btn { flex: none; }
     }
-    /* Portrait tablets: same single column, scaled to the larger canvas. */
-    @media (min-width: 768px) and (orientation: portrait) {
-      body { padding-top: 32px; padding-bottom: 24px; }
-      main { max-width: min(720px, 80vw); padding: 16px 0; }
-      .logo { width: min(52vw, 440px); margin-bottom: 32px; }
-      .wordmark { font-size: clamp(32px, 4.5vw, 40px); }
-      .tagline { margin-top: 20px; font-size: clamp(17px, 2.4vw, 20px); }
-      .pitch { font-size: clamp(15px, 2vw, 17px); max-width: 40ch; }
-      .soon { margin-top: 72px; font-size: clamp(84px, min(12vw, 12vh), 120px); }
-      .store { font-size: 14px; }
-      .capture { margin-top: 56px; max-width: 480px; }
-      .field, .btn { height: 52px; }
-      .field { font-size: 17px; }
-      .btn { font-size: 14px; padding: 0 28px; }
+    @media (max-width: 767px) {
+      .table .rim  { stroke-opacity: 0.12; }
+      .table .seat { stroke-opacity: 0.16; }
+    }
+    @media (orientation: landscape) and (max-height: 500px) {   /* phones on their side */
+      .logo-wrap { width: min(200px, 30vw); margin-bottom: var(--s3); }
+      .soon { margin-top: var(--s5); font-size: clamp(30px, 6vw, 44px); }
+      .capture { margin-top: var(--s5); }
     }
 
-    /* Short phones (iPhone SE class, ≤ 720px tall): compact the rhythm so the
-       page still fits one viewport. Same composition, smaller steps. */
-    @media (max-width: 767px) and (max-height: 720px) and (orientation: portrait) {
-      body { padding-top: 16px; }
-      main { padding: 8px 0; }
-      .logo { width: min(180px, 56vw); margin-bottom: 16px; }
-      .soon { margin-top: 32px; }
-      .capture { margin-top: 32px; }
-      .note { min-height: 0; }
-    }
-
-    /* ── Landscape / desktop (DESIGN.md §9): same column, scaled ────
-       Identical structure to the phone layout. Every size is the smaller
-       of a width-based and a height-based measure, so the column grows
-       with the screen but always fits the viewport height without
-       scrolling (1366×768 up to 4K). */
-    @media (orientation: landscape) and (min-width: 768px) and (min-height: 501px) {
-      body {
-        padding-top: max(24px, env(safe-area-inset-top));
-        padding-bottom: max(16px, env(safe-area-inset-bottom));
-      }
-      main { max-width: min(960px, 84vw); padding: 8px 0; }
-
-      .logo      { width: min(36vw, 36vh, 480px); margin-bottom: clamp(20px, 3vh, 32px); }
-      .wordmark  { font-size: clamp(28px, min(3vw, 4.4vh), 44px); }
-      .tagline   { margin-top: clamp(12px, 2vh, 20px); font-size: clamp(17px, min(1.5vw, 2.4vh), 22px); }
-      .pitch     { font-size: clamp(15px, min(1.3vw, 2vh), 19px); max-width: 44ch; }
-
-      .soon      { margin-top: clamp(28px, 4.5vh, 56px); font-size: clamp(72px, min(8vw, 11vh), 128px); }
-      .store     { margin-top: clamp(10px, 1.4vh, 14px); font-size: clamp(13px, min(1vw, 1.5vh), 15px); }
-
-      .capture   { margin-top: clamp(20px, 2.8vh, 40px); max-width: min(560px, 46vw); }
-      .invite    { margin-bottom: clamp(8px, 1.2vh, 14px); font-size: clamp(15px, min(1.2vw, 1.9vh), 18px); }
-      .done        { padding: clamp(14px, 2vh, 20px) 24px; }
-      .done .share { margin-top: 10px; padding-top: 10px; }
-      .field, .btn { height: clamp(48px, 6vh, 56px); }
-      .field     { font-size: clamp(16px, min(1.25vw, 2vh), 18px); }
-      .btn       { font-size: clamp(13px, min(1.05vw, 1.6vh), 15px); padding: 0 clamp(24px, 2vw, 32px); }
-      .note      { min-height: 0; }
-      .note:empty{ display: none; }
-
-      footer     { padding-top: clamp(10px, 1.5vh, 20px); }
-
-    }
-
-    /* Short landscape screens (≤ 800px tall, e.g. 1366×768): compress the
-       rhythm a step further so the column still fits without scrolling. */
-    @media (orientation: landscape) and (min-width: 768px) and (min-height: 501px) and (max-height: 800px) {
-      body { padding-top: 16px; padding-bottom: 12px; }
-      main { padding: 4px 0; }
-      .logo { width: min(36vw, 33vh, 480px); margin-bottom: 2.4vh; }
-      .tagline { margin-top: 1.6vh; }
-      .soon { margin-top: 4.5vh; font-size: min(8vw, 10vh); }
-      .store { margin-top: 1.2vh; }
-      .capture { margin-top: 3.5vh; }
-      .consent { margin-top: 8px; }
-      footer { padding-top: 1.5vh; }
-      footer p { margin: 2px 0; }
-    }
-
-    /* Phones in landscape (≤ 500px tall): same column, compact steps. The
-       page scrolls here — a 375px-tall viewport cannot hold the
-       composition — but stays one structure and never clips. */
-    @media (orientation: landscape) and (max-height: 500px) {
-      body { padding-top: 16px; padding-bottom: 12px; }
-      main { padding: 8px 0; }
-      .logo { width: min(200px, 30vw); margin-bottom: 12px; }
-      .soon { margin-top: 28px; font-size: clamp(40px, 9vw, 56px); }
-      .capture { margin-top: 24px; }
-      .field { padding: 0 12px; }
-      .btn   { padding: 0 16px; }
-      .note  { min-height: 0; }
-      .note:empty { display: none; }
-      footer { padding-top: 16px; }
-    }
-
-    /* ── Reduced motion (DESIGN.md §7) ──────────────────────────────── */
+    /* ── Reduced motion: one 200ms opacity fade, nothing moves ──────── */
     @media (prefers-reduced-motion: reduce) {
-      .fade-up { animation: none; opacity: 1; transform: none; }
-      .field, .btn { transition: none; }
+      .vignette, .light, .logo-wrap, .e-head, .e-sub, .e-soon, .e-form, .table .seat,
+      html.quick .vignette, html.quick .light, html.quick .logo-wrap, html.quick .e-head, html.quick .e-sub,
+      html.quick .e-soon, html.quick .e-form, html.quick .table .seat, footer, html.quick footer { animation: fade var(--t-reduced) ease-out both; }
+      .grain, html.quick .grain { animation: grain-in var(--t-reduced) ease-out both; }
+      .light i, .table .rim, .logo-clip::after, .dot, .btn:hover:not([disabled])::after, .nudge, .table .ring.go { animation: none; }
+      .table .rim { stroke-dashoffset: 0; }
+      .dot { opacity: 1; transform: none; }
+      .btn { transform: none; transition: none; }
+      .btn.busy .bar { animation: none; width: 100%; transform: none; }
+      .hint, .field:focus + .hint { transform: translateY(-50%); }
+      .rv-line span, .done > *, .form-block, .copy > span { transform: none; transition-property: opacity; transition-duration: var(--t-reduced); transition-timing-function: ease-out; transition-delay: 0s !important; }
+      .capture.is-done .form-block, .capture.is-done .done > * { transform: none; }
+      .table .seat { transition: none; }
     }
   </style>
+  <script>
+    (function (d) {
+      var c = d.documentElement.classList; c.add("entering");
+      try { if (sessionStorage.getItem("bl-seen")) c.add("quick"); sessionStorage.setItem("bl-seen", "1"); } catch (e) {}
+    })(document);
+  </script>
 </head>
 <body>
 
-  <main class="fade-up">
+  <div class="ambient" aria-hidden="true">
+    <div class="light"><i></i></div>
+    <svg class="table" viewBox="0 0 1000 1000" focusable="false">
+      <path class="rim" pathLength="1" d="M500 200a300 300 0 1 1 0 600a300 300 0 1 1 0-600"/>
+      <circle class="seat" style="--i:0" cx="500.0" cy="128.0" r="15"/>
+      <circle class="seat" style="--i:1" cx="718.7" cy="199.0" r="15"/>
+      <circle class="seat" style="--i:2" cx="853.8" cy="385.0" r="15"/>
+      <circle class="seat" style="--i:3" cx="853.8" cy="615.0" r="15"/>
+      <circle class="seat" style="--i:4" cx="718.7" cy="801.0" r="15"/>
+      <circle class="seat" style="--i:5" cx="500.0" cy="872.0" r="15"/>
+      <circle class="seat" style="--i:6" cx="281.3" cy="801.0" r="15"/>
+      <circle class="seat" style="--i:7" cx="146.2" cy="615.0" r="15"/>
+      <circle class="seat" style="--i:8" cx="146.2" cy="385.0" r="15"/>
+      <circle class="seat" style="--i:9" cx="281.3" cy="199.0" r="15"/>
+      <circle class="ring" cx="718.7" cy="199.0" r="15"/>
+    </svg>
+    <div class="vignette"></div>
+    <div class="grain"></div>
+  </div>
+
+  <main>
     <div class="brand">
-      <img class="logo" src="logoB.png" alt="Blacklink chained-B logo" width="1672" height="941" decoding="async" fetchpriority="high">
-      <h1 class="wordmark">Blacklink</h1>
-      <p class="tagline">Where you find your co-founder.</p>
-      <p class="pitch">Co-founder matching for serious builders. War rooms. Live presence. Real wins.</p>
+      <span class="logo-wrap"><span class="logo-clip"><picture><source type="image/webp" srcset="logoB-480.webp 480w, logoB-840.webp 840w" sizes="(max-width: 666px) 60vw, 400px"><img class="logo" src="logoB.png" alt="Blacklink chained-B logo" width="1672" height="941" decoding="async" fetchpriority="high"></picture></span></span>
+      <div class="e-head">
+        <h1 class="wordmark">Blacklink</h1>
+        <p class="tagline">Where you find your co-founder.</p>
+      </div>
+      <div class="e-sub">
+        <p class="pitch">Co-founder matching for serious builders. <button type="button" class="rv" aria-describedby="rv1" aria-expanded="false" data-rv="rv1">War rooms</button>. <button type="button" class="rv" aria-describedby="rv2" aria-expanded="false" data-rv="rv2">Live presence</button>. Real wins.</p>
+        <p class="rv-line" aria-hidden="true"><span id="rv1">Ten seats. Tap a chair and everyone sees you arrive.</span><span id="rv2">You see who is actually there before you speak.</span></p>
+      </div>
     </div>
 
     <div class="action">
-    <p class="soon">Coming<br>Soon</p>
-    <p class="store">App Store</p>
-
-    <div class="capture" id="capture">
-      <!-- No-JS fallback: posts the address as a plain-text email draft. JS below intercepts. -->
-      <p class="invite">Be first in the room.</p>
-      <form id="notify" action="mailto:hello@joinblacklink.com?subject=Blacklink%20waitlist" method="post" enctype="text/plain" novalidate>
-        <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <input
-          class="field"
-          id="email"
-          name="email"
-          type="email"
-          inputmode="email"
-          autocomplete="email"
-          autocapitalize="off"
-          spellcheck="false"
-          placeholder="your@email.com"
-          aria-label="Email address"
-          required
-        >
-        <button class="btn" type="submit" id="submit">Request access</button>
-      </form>
-      <p class="note" id="note" role="status" aria-live="polite"></p>
-      <p class="consent">Early access opens in waves. We’ll also email you on launch day. No spam. <a href="/privacy">Privacy Policy</a>.</p>
-      <div class="done" id="done" role="status" aria-live="polite">
-        <p class="headline">You’re on the list.</p>
-        <p class="sub">We’ll be in touch when your invite is ready.</p>
-        <p class="share">Know someone you’d build with? Send them joinblacklink.com.</p>
+      <div class="e-soon">
+        <p class="soon">Coming<br>Soon</p>
+        <p class="store">App Store</p>
       </div>
-    </div>
+
+      <div class="capture e-form" id="capture">
+        <div class="stage">
+          <div class="form-block" id="formBlock">
+            <p class="invite">Be first in the room.</p>
+            <!-- No-JS fallback: posts the address as a plain-text email draft. JS below intercepts. -->
+            <form id="notify" action="mailto:hello@joinblacklink.com?subject=Blacklink%20waitlist" method="post" enctype="text/plain" novalidate>
+              <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+              <div class="fieldwrap" id="fieldwrap">
+                <label class="sr" for="email">Email address</label>
+                <input class="field" id="email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder=" " aria-describedby="note" required>
+                <span class="hint" aria-hidden="true">your@email.com</span>
+              </div>
+              <button class="btn" type="submit" id="submit"><span class="lbl">Request access</span><span class="bar" aria-hidden="true"></span></button>
+            </form>
+            <p class="note" id="note" role="status" aria-live="polite"></p>
+            <p class="consent"><span class="dot" aria-hidden="true"></span>Early access opens in waves. We’ll also email you on launch day. No spam. <a href="/privacy">Privacy Policy</a>.</p>
+          </div>
+          <div class="done" id="done" inert>
+            <h2 class="headline" id="doneHead" tabindex="-1">You’re on the list.</h2>
+            <p class="sub">We’ll be in touch when your invite is ready.</p>
+            <p class="share">Know someone you’d build with? Send them <button type="button" class="copy" id="copy"><span>joinblacklink.com</span><span aria-hidden="true">Copied</span></button>.<span class="sr" id="copied" aria-live="polite"></span></p>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -450,6 +490,72 @@
       var email = document.getElementById("email");
       var button = document.getElementById("submit");
       var note = document.getElementById("note");
+      /* ── UI states and small interactions (no submission logic here) ── */
+      const ui = (() => {
+        const d = document, $ = (i) => d.getElementById(i), on = (el, ev, f, o) => el.addEventListener(ev, f, o);
+        const rm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const wrap = $("fieldwrap"), B = button;
+        setTimeout(() => d.documentElement.classList.remove("entering"), 2800);
+        on(email, "input", () => email.removeAttribute("aria-invalid"));
+
+        // Fine pointers only: the light eases ~4% toward the cursor; the button drifts at most 4px.
+        if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+          const L = d.querySelector(".light");
+          let tx = 0, ty = 0, x = 0, y = 0, run = 0, r;
+          const step = () => {
+            if (d.hidden || d.activeElement === email) return (run = 0);   // paused while hidden or typing
+            x += (tx - x) * 0.05; y += (ty - y) * 0.05;
+            L.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
+            run = Math.abs(tx - x) + Math.abs(ty - y) > 0.2 ? requestAnimationFrame(step) : 0;
+          };
+          on(window, "pointermove", (e) => {
+            if (rm()) return;
+            tx = (e.clientX - innerWidth / 2) * 0.04; ty = (e.clientY - innerHeight / 2) * 0.04;
+            run ||= requestAnimationFrame(step);
+          }, { passive: true });
+          const mag = (mx, my) => { B.style.setProperty("--mx", mx); B.style.setProperty("--my", my); };
+          const c = (v) => Math.max(-4, Math.min(4, v)).toFixed(1) + "px";
+          on(B, "pointermove", (e) => {
+            if (rm() || B.disabled) return;
+            r ||= B.getBoundingClientRect();
+            mag(c((e.clientX - r.left - r.width / 2) / 8), c((e.clientY - r.top - r.height / 2) / 4));
+          });
+          on(B, "pointerleave", () => { r = 0; mag("0px", "0px"); });
+        }
+
+        // Reveals: hover, focus or tap opens; blur or a second tap closes.
+        const rvs = d.querySelectorAll(".rv");
+        rvs.forEach((b) => {
+          const t = $(b.dataset.rv); let armed = 0;
+          const show = () => rvs.forEach((o) => { $(o.dataset.rv).classList.toggle("on", o === b); o.setAttribute("aria-expanded", o === b); });
+          const hide = () => { t.classList.remove("on"); b.setAttribute("aria-expanded", "false"); armed = 0; };
+          on(b, "mouseenter", show); on(b, "focus", show); on(b, "blur", hide);
+          on(b, "mouseleave", () => d.activeElement !== b && hide());
+          on(b, "click", () => armed && t.classList.contains("on") ? hide() : (show(), armed = 1));
+        });
+
+        // Share line: copy the address and show "Copied" briefly.
+        on($("copy"), "click", function () {
+          navigator.clipboard?.writeText("https://joinblacklink.com").then(() => {
+            this.classList.add("copied"); $("copied").textContent = "Link copied";
+            setTimeout(() => { this.classList.remove("copied"); $("copied").textContent = ""; }, 1600);
+          }, () => {});
+        });
+
+        return {
+          fail() {
+            email.setAttribute("aria-invalid", "true");
+            if (!rm()) { wrap.classList.remove("nudge"); void wrap.offsetWidth; wrap.classList.add("nudge"); }
+          },
+          done() {
+            $("capture").classList.add("is-done");
+            $("formBlock").setAttribute("inert", ""); $("done").removeAttribute("inert");
+            d.querySelectorAll(".seat")[1].classList.add("on");
+            if (!rm()) d.querySelector(".ring").classList.add("go");
+            setTimeout(() => $("doneHead").focus({ preventScroll: true }), rm() ? 0 : 300);
+          }
+        };
+      })();
 
       function remember(address) {
         try {
@@ -459,14 +565,12 @@
         } catch (e) { /* storage unavailable — ignore */ }
       }
 
-      function showDone() {
-        note.textContent = "";
-        capture.classList.add("is-done");
-      }
+      function showDone() { note.textContent = ""; ui.done(); }
 
       function setBusy(busy) {
         button.disabled = busy;
-        button.textContent = busy ? "Sending" : "Request access";
+        button.classList.toggle("busy", busy);
+        button.setAttribute("aria-busy", busy);
       }
 
       function sendBrevo(address) {
@@ -508,6 +612,7 @@
 
         if (!email.checkValidity()) {
           note.textContent = "Enter a valid email address.";
+          ui.fail();
           email.focus();
           return;
         }
@@ -541,6 +646,7 @@
           })
           .catch(function () {
             note.textContent = "Something went wrong. Try again.";
+            ui.fail();
           })
           .finally(function () {
             setBusy(false);
