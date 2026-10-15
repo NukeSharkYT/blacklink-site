@@ -42,7 +42,7 @@ Self-hosted, declared inline in `index.html` (no render-blocking stylesheet); Ar
 
 | Role | Font | Size | Colour |
 |---|---|---|---|
-| Wordmark (headline) | Archivo Black, uppercase, 0.1em | clamp(30px, 6.6vw, 50px) | `--text` |
+| Wordmark (headline) | Archivo Black, uppercase, 0.1em | clamp(30px, 6.6vw, 50px) | `--text` with a permanent `--glow` halo |
 | Tagline | Inter 500 | clamp(16px, 0.9vw + 12px, 20px) | `--text-secondary` |
 | Pitch (supporting line) | Inter 400 | clamp(14px, 0.4vw + 13px, 16px), max 40ch | `--text-secondary` |
 | COMING SOON | Archivo Black, uppercase, two lines | clamp(34px, 7.4vw, 60px) | `--text-secondary` (quieter than the headline; set `--text` to restore its old weight) |
@@ -82,7 +82,7 @@ Tap targets are at least 44px: the field and button are 56px; the reveals, the c
 
 ## 6. Depth
 
-Flat. Hairline borders and the ambient light only. No shadows or backdrop blur. The one glow on the page is COMING SOON's (§7, requested by the user). The only filter is the logo's one-time 3px entrance blur.
+Flat. Hairline borders and the ambient light only. No shadows or backdrop blur. Two glows, both requested by the user and sharing one `--glow` white halo token: the BLACKLINK wordmark glows permanently, and COMING SOON fades into the same glow on a loop (§7). The only filter is the logo's one-time 3px entrance blur.
 
 ## 7. Motion
 
@@ -124,7 +124,7 @@ After the entrance, only the drifting light, the presence dot and the COMING SOO
 - ❌ No rings, circles, tables or line art in the background.
 - ❌ No fake social proof: no member numbers, no "online now", no claim that rooms are live.
 - ❌ No libraries and no build step.
-- ❌ No layout-affecting animation; no shadows or backdrop blur; no glow beyond the COMING SOON loop.
+- ❌ No layout-affecting animation; no shadows or backdrop blur; no glow beyond the wordmark and the COMING SOON loop.
 - ❌ No hover-only behaviour without a tap and keyboard equivalent.
 - ❌ Don't edit `logoB.png`; regenerate the WebP copies from it if it ever changes.
 - ❌ Never reference files outside this folder.
