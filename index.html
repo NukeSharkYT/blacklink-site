@@ -83,8 +83,7 @@
       --t-drift: 50s;            /* ambient light loop */
       --t-pulse: 4s;             /* presence dot */
       --t-glow: 5s;              /* COMING SOON: grey → white glow → grey */
-      --glow: 0 0 6px rgba(var(--text-rgb), 0.35), 0 0 22px rgba(var(--text-rgb), 0.28);   /* COMING SOON halo */
-      --glow-strong: 0 0 8px rgba(var(--text-rgb), 0.5), 0 0 26px rgba(var(--text-rgb), 0.4), 0 0 48px rgba(var(--text-rgb), 0.16);   /* wordmark: a little stronger */
+      --glow: 0 0 6px rgba(var(--text-rgb), 0.35), 0 0 22px rgba(var(--text-rgb), 0.28);   /* shared white halo */
       --rise: 12px;
 
       color-scheme: dark;
@@ -167,7 +166,7 @@
       font-size: clamp(30px, 6.6vw, 50px); line-height: 1;
       letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--text);
-      text-shadow: var(--glow-strong);   /* always glowing white */
+      text-shadow: var(--glow);   /* always glowing white, same halo as the COMING SOON peak */
     }
     .tagline { margin: var(--s3) 0 0; font-size: clamp(16px, 0.9vw + 12px, 20px); font-weight: 500; color: var(--text-secondary); }
     .pitch { margin: var(--s2) auto 0; max-width: 40ch; font-size: clamp(14px, 0.4vw + 13px, 16px); color: var(--text-secondary); text-wrap: balance; }
