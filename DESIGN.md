@@ -82,7 +82,7 @@ Tap targets are at least 44px: the field and button are 56px; the reveals, the c
 
 ## 6. Depth
 
-Flat. Hairline borders and the ambient light only. No shadows, no glow, no backdrop blur. The only filter is the logo's one-time 3px entrance blur.
+Flat. Hairline borders and the ambient light only. No shadows or backdrop blur. The one glow on the page is COMING SOON's (§7, requested by the user). The only filter is the logo's one-time 3px entrance blur.
 
 ## 7. Motion
 
@@ -103,11 +103,13 @@ Every timing is a CSS variable in `:root` (`--t-*`), with one easing: `--ease: c
 
 Everything has landed by 2.2s. Logo and headline start at 1% opacity rather than 0, which is still black to the eye; browsers skip fully transparent paints when timing Largest Contentful Paint, and without this Lighthouse reports no LCP at all.
 
-After the entrance, only the drifting light and the presence dot move. `will-change` is applied during the entrance only (`html.entering`, removed at 2.8s).
+**COMING SOON glow** (requested by the user): the text rests in `--text-secondary` grey; a white copy on top (`.soon-glow`, `aria-hidden`, soft white `text-shadow`) fades 0 → 1 → 0 on a `--t-glow` 5s ease-in-out loop that starts once the entrance has landed. Only its opacity animates.
+
+After the entrance, only the drifting light, the presence dot and the COMING SOON glow move. `will-change` is applied during the entrance only (`html.entering`, removed at 2.8s).
 
 **Repeat visit in the same session** (`sessionStorage` key `bl-seen`, read by a tiny head script before first paint): `html.quick` replaces the whole entrance with a 400ms fade (`--t-quick`).
 
-**Reduced motion** (`prefers-reduced-motion: reduce`): one 200ms opacity fade (`--t-reduced`) replaces everything. No drift, no sweep, no magnetic button, no pulse, no nudge; the sending line is static; the success state still swaps in place.
+**Reduced motion** (`prefers-reduced-motion: reduce`): one 200ms opacity fade (`--t-reduced`) replaces everything. No drift, no sweep, no glow loop, no magnetic button, no pulse, no nudge; the sending line is static; the success state still swaps in place.
 
 ## 8. Do's and Don'ts
 
@@ -122,7 +124,7 @@ After the entrance, only the drifting light and the presence dot move. `will-cha
 - ❌ No rings, circles, tables or line art in the background.
 - ❌ No fake social proof: no member numbers, no "online now", no claim that rooms are live.
 - ❌ No libraries and no build step.
-- ❌ No layout-affecting animation; no shadows, glow or backdrop blur.
+- ❌ No layout-affecting animation; no shadows or backdrop blur; no glow beyond the COMING SOON loop.
 - ❌ No hover-only behaviour without a tap and keyboard equivalent.
 - ❌ Don't edit `logoB.png`; regenerate the WebP copies from it if it ever changes.
 - ❌ Never reference files outside this folder.

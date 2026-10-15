@@ -82,6 +82,7 @@
       --t-reduced: 200ms;        /* prefers-reduced-motion: one opacity fade */
       --t-drift: 50s;            /* ambient light loop */
       --t-pulse: 4s;             /* presence dot */
+      --t-glow: 5s;              /* COMING SOON: grey → white glow → grey */
       --rise: 12px;
 
       color-scheme: dark;
@@ -192,6 +193,15 @@
       letter-spacing: 0.04em; text-transform: uppercase;
       color: var(--text-secondary);   /* quieter than the headline; set to var(--text) for the old weight */
     }
+    .soon { position: relative; }
+    .soon-glow {   /* white copy on top of the grey text; only its opacity animates */
+      position: absolute; inset: 0; pointer-events: none;
+      color: var(--text);
+      text-shadow: 0 0 6px rgba(var(--text-rgb), 0.35), 0 0 22px rgba(var(--text-rgb), 0.28);
+      opacity: 0;
+      animation: glow var(--t-glow) ease-in-out calc(var(--t-soon-delay) + var(--t-soon-dur)) infinite;
+    }
+    @keyframes glow { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
     .store { margin: var(--s3) 0 0; font-size: 12px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
 
     /* ── The form: the focal point ──────────────────────────────────── */
@@ -353,7 +363,7 @@
       html.quick .vignette, html.quick .light, html.quick .logo-wrap, html.quick .e-head, html.quick .e-sub,
       html.quick .e-soon, html.quick .e-form, footer, html.quick footer { animation: fade var(--t-reduced) ease-out both; }
       .grain, html.quick .grain { animation: grain-in var(--t-reduced) ease-out both; }
-      .light i, .logo-clip::after, .dot, .btn:hover:not([disabled])::after, .nudge { animation: none; }
+      .light i, .logo-clip::after, .dot, .btn:hover:not([disabled])::after, .nudge, .soon-glow { animation: none; }
       .dot { opacity: 1; transform: none; }
       .btn { transform: none; transition: none; }
       .btn.busy .bar { animation: none; width: 100%; transform: none; }
@@ -392,7 +402,7 @@
 
     <div class="action">
       <div class="e-soon">
-        <p class="soon">Coming<br>Soon</p>
+        <p class="soon"><span class="soon-glow" aria-hidden="true">Coming<br>Soon</span>Coming<br>Soon</p>
         <p class="store">App Store</p>
       </div>
 
