@@ -73,7 +73,7 @@ Hierarchy: logo → headline → form; everything else quieter.
 
 **Presence cue**: a 6px white dot before the consent line ("Early access opens in waves. …"), pulsing opacity/scale on a 4s period. Honest wording only: nothing about rooms being open or people being present.
 
-**Logo**: the PNG is untouched. It is served as display-sized WebP copies (`logoB-480.webp`, `logoB-840.webp`, ~47 dB PSNR against the PNG resample) with `logoB.png` as the fallback. A soft pure-black pool (`.logo-wrap::before`) sits behind it so the image's black background has no visible edge over the ambient layer in any browser.
+**Logo**: the PNG is untouched. It is served as display-sized WebP copies (`logoB-480.webp`, `logoB-840.webp`) with a transparent background: white with alpha taken from brightness, which matches the PNG within 0.33/255 over black and has no box edge over the ambient layer in any browser. `logoB.png` remains the fallback. Nothing sits behind the logo; the entrance sweep is masked to the logo shape.
 
 ## 5. Layout
 

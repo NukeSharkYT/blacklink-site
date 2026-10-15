@@ -162,17 +162,15 @@
     .brand, .action { width: 100%; }
 
     /* Hierarchy: logo → headline → form; everything else quieter. */
-    .logo-wrap { position: relative; display: block; width: min(400px, 60vw, 38vh); margin: 0 auto var(--s5); isolation: isolate; }
-    .logo-wrap::before {   /* pure-black pool behind the logo so the PNG's black background has no visible edge on any browser */
-      content: ""; position: absolute; inset: -45% -30%; z-index: -1; pointer-events: none;
-      background: radial-gradient(closest-side, var(--bg) 84%, rgba(var(--bg-rgb), 0) 100%);
-    }
-    .logo-clip { position: relative; display: block; overflow: hidden; }
+    .logo-wrap { position: relative; display: block; width: min(400px, 60vw, 38vh); margin: 0 auto var(--s5); }
+    .logo-clip { position: relative; display: block; }
     .logo { display: block; width: 100%; height: auto; user-select: none; -webkit-user-drag: none; }
-    .logo-clip::after {   /* one specular sweep, overlay-blended inside the logo box so black stays black */
+    .logo-clip::after {   /* one specular sweep, masked to the logo's own shape */
       content: ""; position: absolute; inset: 0; pointer-events: none;
-      background: linear-gradient(105deg, transparent 35%, rgba(var(--text-rgb), 0.55) 50%, transparent 65%);
-      mix-blend-mode: overlay; opacity: 0; transform: translateX(-60%);
+      background: linear-gradient(105deg, transparent 35%, rgba(var(--text-rgb), 0.35) 50%, transparent 65%) no-repeat;
+      background-size: 300% 100%; background-position: 100% 0;
+      -webkit-mask: url("logoB-840.webp") center / 100% 100% no-repeat; mask: url("logoB-840.webp") center / 100% 100% no-repeat;
+      opacity: 0;
     }
 
     .wordmark {
@@ -334,7 +332,7 @@
     .e-head { --o0: 0.01; }
     @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
     @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-    @keyframes sweep { 0% { opacity: 1; transform: translateX(-60%); } 100% { opacity: 1; transform: translateX(60%); } }
+    @keyframes sweep { 0% { opacity: 1; background-position: 100% 0; } 100% { opacity: 1; background-position: 0% 0; } }
 
     .vignette, .grain, .light { animation: fade var(--t-ambient-dur) var(--ease) var(--t-ambient-delay) both; }
     .grain { animation-name: grain-in; }
