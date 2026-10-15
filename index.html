@@ -75,8 +75,6 @@
       --t-logo-delay: 300ms;     --t-logo-dur: 900ms;
       --t-head-delay: 700ms;     --t-head-dur: 800ms;
       --t-sub-delay: 820ms;
-      --t-table-delay: 1100ms;   --t-table-dur: 1400ms;
-      --t-seat-stagger: 60ms;    --t-seat-dur: 500ms;
       --t-soon-delay: 1500ms;    --t-soon-dur: 600ms;
       --t-form-delay: 1800ms;    --t-form-dur: 400ms;
       --t-sweep-delay: 2600ms;   --t-sweep-dur: 1200ms;
@@ -115,7 +113,7 @@
     .sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
     .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 
-    /* ── Ambient layer: light, the empty table, vignette, grain ─────── */
+    /* ── Ambient layer: light, vignette, grain ─────────────────────── */
     .ambient { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
     .ambient > * { position: absolute; }
     .light { inset: -30%; }
@@ -129,19 +127,6 @@
       50%  { transform: translate3d(3%, 1%, 0); }
       100% { transform: translate3d(-1%, 4%, 0); }
     }
-    .table {
-      left: 50%; top: 50%;
-      width: clamp(560px, 118vmin, 1200px); height: auto;
-      transform: translate(-50%, -50%);
-      overflow: visible;
-    }
-    .table .rim, .table .seat { fill: none; stroke: var(--text); stroke-width: 1.4; }
-    .table .rim  { stroke-opacity: 0.16; stroke-dasharray: 1; stroke-dashoffset: 0; }
-    .table .seat { stroke-opacity: 0.22; transform-box: fill-box; transform-origin: center; transition: fill-opacity 500ms var(--ease), stroke-opacity 500ms var(--ease); fill: var(--text); fill-opacity: 0; }
-    .table .seat.on { fill-opacity: 0.95; stroke-opacity: 1; }
-    .table .ring { fill: none; stroke: var(--text); stroke-width: 1.4; opacity: 0; transform-box: fill-box; transform-origin: center; }
-    .table .ring.go { animation: ring 1600ms var(--ease) forwards; }
-    @keyframes ring { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 0; transform: scale(3.2); } }
     .vignette { inset: 0; background: radial-gradient(ellipse 75% 70% at 50% 50%, transparent 35%, rgba(var(--bg-rgb), 0.75) 75%, var(--bg) 100%); }
     .grain {
       inset: 0; opacity: 0.06;
@@ -331,7 +316,6 @@
        browsers skip fully transparent paints when timing Largest Contentful Paint. */
     .e-head { --o0: 0.01; }
     @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
     @keyframes sweep { 0% { opacity: 1; background-position: 100% 0; } 100% { opacity: 1; background-position: 0% 0; } }
 
     .vignette, .grain, .light { animation: fade var(--t-ambient-dur) var(--ease) var(--t-ambient-delay) both; }
@@ -341,8 +325,6 @@
     .logo-clip::after { animation: sweep var(--t-sweep-dur) var(--ease) var(--t-sweep-delay) 1 both; }
     .e-head { animation: rise var(--t-head-dur) var(--ease) var(--t-head-delay) both; }
     .e-sub  { animation: rise var(--t-head-dur) var(--ease) var(--t-sub-delay) both; }
-    .table .rim  { animation: draw var(--t-table-dur) var(--ease) var(--t-table-delay) both; }
-    .table .seat { animation: fade var(--t-seat-dur) var(--ease) calc(var(--t-table-delay) + var(--i) * var(--t-seat-stagger)) both; }
     .e-soon { animation: rise var(--t-soon-dur) var(--ease) var(--t-soon-delay) both; }
     .e-form { animation: rise var(--t-form-dur) var(--ease) var(--t-form-delay) both; }
     footer  { animation: fade var(--t-form-dur) var(--ease) var(--t-form-delay) both; }
@@ -350,19 +332,14 @@
 
     /* Repeat visit in the same session: a short fade, nothing else */
     html.quick .vignette, html.quick .light, html.quick .logo-wrap, html.quick .e-head, html.quick .e-sub,
-    html.quick .table .seat, html.quick .e-soon, html.quick .e-form, html.quick footer { animation: fade var(--t-quick) ease-out both; }
+    html.quick .e-soon, html.quick .e-form, html.quick footer { animation: fade var(--t-quick) ease-out both; }
     html.quick .grain { animation: grain-in var(--t-quick) ease-out both; }
-    html.quick .table .rim { animation: none; }
     html.quick .logo-clip::after { animation: none; }
 
     /* ── Responsive ─────────────────────────────────────────────────── */
     @media (min-width: 480px) {
       form { flex-direction: row; }
       .btn { flex: none; }
-    }
-    @media (max-width: 767px) {
-      .table .rim  { stroke-opacity: 0.12; }
-      .table .seat { stroke-opacity: 0.16; }
     }
     @media (orientation: landscape) and (max-height: 500px) {   /* phones on their side */
       .logo-wrap { width: min(200px, 30vw); margin-bottom: var(--s3); }
@@ -372,19 +349,17 @@
 
     /* ── Reduced motion: one 200ms opacity fade, nothing moves ──────── */
     @media (prefers-reduced-motion: reduce) {
-      .vignette, .light, .logo-wrap, .e-head, .e-sub, .e-soon, .e-form, .table .seat,
+      .vignette, .light, .logo-wrap, .e-head, .e-sub, .e-soon, .e-form,
       html.quick .vignette, html.quick .light, html.quick .logo-wrap, html.quick .e-head, html.quick .e-sub,
-      html.quick .e-soon, html.quick .e-form, html.quick .table .seat, footer, html.quick footer { animation: fade var(--t-reduced) ease-out both; }
+      html.quick .e-soon, html.quick .e-form, footer, html.quick footer { animation: fade var(--t-reduced) ease-out both; }
       .grain, html.quick .grain { animation: grain-in var(--t-reduced) ease-out both; }
-      .light i, .table .rim, .logo-clip::after, .dot, .btn:hover:not([disabled])::after, .nudge, .table .ring.go { animation: none; }
-      .table .rim { stroke-dashoffset: 0; }
+      .light i, .logo-clip::after, .dot, .btn:hover:not([disabled])::after, .nudge { animation: none; }
       .dot { opacity: 1; transform: none; }
       .btn { transform: none; transition: none; }
       .btn.busy .bar { animation: none; width: 100%; transform: none; }
       .hint, .field:focus + .hint { transform: translateY(-50%); }
       .rv-line span, .done > *, .form-block, .copy > span { transform: none; transition-property: opacity; transition-duration: var(--t-reduced); transition-timing-function: ease-out; transition-delay: 0s !important; }
       .capture.is-done .form-block, .capture.is-done .done > * { transform: none; }
-      .table .seat { transition: none; }
     }
   </style>
   <script>
@@ -398,20 +373,6 @@
 
   <div class="ambient" aria-hidden="true">
     <div class="light"><i></i></div>
-    <svg class="table" viewBox="0 0 1000 1000" focusable="false">
-      <path class="rim" pathLength="1" d="M500 200a300 300 0 1 1 0 600a300 300 0 1 1 0-600"/>
-      <circle class="seat" style="--i:0" cx="500.0" cy="128.0" r="15"/>
-      <circle class="seat" style="--i:1" cx="718.7" cy="199.0" r="15"/>
-      <circle class="seat" style="--i:2" cx="853.8" cy="385.0" r="15"/>
-      <circle class="seat" style="--i:3" cx="853.8" cy="615.0" r="15"/>
-      <circle class="seat" style="--i:4" cx="718.7" cy="801.0" r="15"/>
-      <circle class="seat" style="--i:5" cx="500.0" cy="872.0" r="15"/>
-      <circle class="seat" style="--i:6" cx="281.3" cy="801.0" r="15"/>
-      <circle class="seat" style="--i:7" cx="146.2" cy="615.0" r="15"/>
-      <circle class="seat" style="--i:8" cx="146.2" cy="385.0" r="15"/>
-      <circle class="seat" style="--i:9" cx="281.3" cy="199.0" r="15"/>
-      <circle class="ring" cx="718.7" cy="199.0" r="15"/>
-    </svg>
     <div class="vignette"></div>
     <div class="grain"></div>
   </div>
@@ -548,8 +509,6 @@
           done() {
             $("capture").classList.add("is-done");
             $("formBlock").setAttribute("inert", ""); $("done").removeAttribute("inert");
-            d.querySelectorAll(".seat")[1].classList.add("on");
-            if (!rm()) d.querySelector(".ring").classList.add("go");
             setTimeout(() => $("doneHead").focus({ preventScroll: true }), rm() ? 0 : 300);
           }
         };

@@ -10,15 +10,14 @@ Scope: `index.html` only. The legal pages (`privacy.html`, `terms.html`) are bui
 
 **Style**: strict monochrome, dark, still.
 **Keywords**: private, cold, tactical, hairline, heavy type, presence, one gesture.
-**Feel**: an empty war-room table in an unlit room. When you sign up, one seat fills.
+**Feel**: an unlit private room. One soft light, nothing else moving.
 
-**The one motif — the empty table.** A single inline SVG behind the content: a hairline round table and ten small seat circles, white at low opacity, centred in the viewport, cropped by the edges on phones. All ten seats are empty at rest. On a successful signup exactly one seat (top-right, `.seat` index 1, chosen because it sits in clear space at every width) fills solid white with one soft ring pulse. That is the page's only piece of storytelling.
+**No background shapes.** The user has twice rejected drawn background elements (an oval table with seat rings, then a round table with ten seats). The background is light, vignette and grain only. Do not add rings, circles, tables or other line art.
 
 **Ambient layer** (all `aria-hidden`, `pointer-events: none`, behind content):
 1. `.light` — a very large, very low-opacity radial light that drifts on a 50s loop; on desktop with a fine pointer it also eases ~4% toward the cursor.
-2. `.table` — the SVG above.
-3. `.vignette` — radial falloff so every edge reaches pure black.
-4. `.grain` — static film grain: a 160px SVG `feTurbulence` tile as a data URI, opacity 0.06.
+2. `.vignette` — radial falloff so every edge reaches pure black.
+3. `.grain` — static film grain: a 160px SVG `feTurbulence` tile as a data URI, opacity 0.06.
 
 **Dependencies**: none. CSS plus ~3 KB of vanilla JS for UI states (measured with comments and whitespace removed; ~1.3 KB gzipped). No build step.
 
@@ -65,7 +64,7 @@ Hierarchy: logo → headline → form; everything else quieter.
 - **Idle** — form visible; the confirmation is `visibility: hidden` and `inert`.
 - **Sending** — as above.
 - **Error** — plain-language message in `#note` (`role=status`, `aria-live=polite`; reserved line height). Typed text is never cleared. Messages: "Enter a valid email address." / "Something went wrong. Try again."
-- **Success** — form block fades and rises 8px and becomes `inert`; "You're on the list." then "We'll be in touch when your invite is ready." then the share line fade in (250 / 450 / 650ms); one seat fills with the ring pulse; focus moves to the confirmation heading (`tabindex=-1`).
+- **Success** — form block fades and rises 8px and becomes `inert`; "You're on the list." then "We'll be in touch when your invite is ready." then the share line fade in (250 / 450 / 650ms); focus moves to the confirmation heading (`tabindex=-1`).
 
 **Share line**: "joinblacklink.com" is a button that copies `https://joinblacklink.com` and swaps to "Copied" for 1.6s (both labels share a grid cell, so no width jump). A visually hidden live region announces "Link copied".
 
@@ -87,7 +86,7 @@ Flat. Hairline borders and the ambient light only. No shadows, no glow, no backd
 
 ## 7. Motion
 
-Every timing is a CSS variable in `:root` (`--t-*`), with one easing: `--ease: cubic-bezier(0.2, 0.8, 0.2, 1)`. Only `transform` and `opacity` animate, plus the table's single `stroke-dashoffset` draw and the logo's entrance blur.
+Every timing is a CSS variable in `:root` (`--t-*`), with one easing: `--ease: cubic-bezier(0.2, 0.8, 0.2, 1)`. Only `transform` and `opacity` animate, plus the logo's entrance blur.
 
 **Entrance, once per session** (start times):
 
@@ -98,30 +97,29 @@ Every timing is a CSS variable in `:root` (`--t-*`), with one easing: `--ease: c
 | 300ms | logo rises 12px, fades in and sharpens from a 3px blur (900ms) |
 | 700ms | headline (wordmark + tagline) settles (800ms) |
 | 820ms | supporting line, same motion |
-| 1100ms | table outline draws (1400ms); seats fade in, 60ms stagger |
 | 1500ms | COMING SOON + App Store (600ms) |
 | 1800ms | invite line, form, consent and footer (400ms) |
 | 2600ms | one specular sweep across the logo (1200ms), never repeated |
 
-Content has landed by 2.2s; the table outline finishes at 2.5s (shorten `--t-table-dur` to 1100ms to finish everything by 2.2s). Logo and headline start at 1% opacity rather than 0, which is still black to the eye; browsers skip fully transparent paints when timing Largest Contentful Paint, and without this Lighthouse reports no LCP at all.
+Everything has landed by 2.2s. Logo and headline start at 1% opacity rather than 0, which is still black to the eye; browsers skip fully transparent paints when timing Largest Contentful Paint, and without this Lighthouse reports no LCP at all.
 
 After the entrance, only the drifting light and the presence dot move. `will-change` is applied during the entrance only (`html.entering`, removed at 2.8s).
 
 **Repeat visit in the same session** (`sessionStorage` key `bl-seen`, read by a tiny head script before first paint): `html.quick` replaces the whole entrance with a 400ms fade (`--t-quick`).
 
-**Reduced motion** (`prefers-reduced-motion: reduce`): one 200ms opacity fade (`--t-reduced`) replaces everything. No drift, no draw (outline already drawn), no sweep, no magnetic button, no pulse, no nudge, no ring; the sending line is static; the success state still swaps in place and the seat simply appears filled.
+**Reduced motion** (`prefers-reduced-motion: reduce`): one 200ms opacity fade (`--t-reduced`) replaces everything. No drift, no sweep, no magnetic button, no pulse, no nudge; the sending line is static; the success state still swaps in place.
 
 ## 8. Do's and Don'ts
 
 ### Do
 - Keep all copy verbatim: wordmark, tagline, supporting line, COMING SOON (two lines), App Store, "Be first in the room.", REQUEST ACCESS, the waves line, the confirmation lines, the share line, the footer.
 - Keep the signup logic untouched: Brevo form endpoint + Supabase `join_waitlist` RPC in parallel, field names, validation, honeypot, mailto fallback. UI states wrap around it through `ui.fail()` and `ui.done()` only.
-- Keep the table empty at rest; fill exactly one seat, only on success.
 - Keep every motion value in the `--t-*` variables.
 
 ### Don't
 - ❌ No hue anywhere: no accent, no coloured focus ring, no red error text.
 - ❌ No new sections, nav, testimonials, feature lists, counters or scroll-driven animation.
+- ❌ No rings, circles, tables or line art in the background.
 - ❌ No fake social proof: no member numbers, no "online now", no claim that rooms are live.
 - ❌ No libraries and no build step.
 - ❌ No layout-affecting animation; no shadows, glow or backdrop blur.
@@ -133,7 +131,7 @@ After the entrance, only the drifting light and the presence dot move. `will-cha
 
 | Width | Behaviour |
 |---|---|
-| < 480px | Form stacks (field above button, both full width). Table drawn at 560px+ and cropped by the edges, at lower opacity. Reveal line reserves two lines. |
+| < 480px | Form stacks (field above button, both full width). Reveal line reserves two lines. |
 | ≥ 480px | Field and button on one row. |
 | ≥ 600px | Reveal line reserves one line. |
 | Landscape ≤ 500px tall | Compact steps: smaller logo and COMING SOON; page scrolls. |
